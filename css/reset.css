@@ -4,22 +4,7 @@ header,section,footer,aside,nav,article,figure { display: block; }
 
 .preload * { -webkit-transition: none !important; -moz-transition: none !important; -ms-transition: none !important; -o-transition: none !important; }
 
-
-.seo 		{ display: none; }
-
-.clear 		{ clear: both; }
-
 * {
 	position: relative;
 	box-sizing: border-box;
-}
-
-.noselect {
-  -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome and Opera */
 }

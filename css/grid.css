@@ -1,0 +1,43 @@
+/* Grid */
+
+
+.row,
+.rowMax,
+.rowText {
+  display: flex;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.row {
+  max-width: var(--max-width);
+}
+.rowMax {
+  max-width: initial;
+}
+.rowText {
+  max-width: var(--max-width-text);
+  padding: 100px 0;
+}
+
+.d25,
+.d33,
+.d50,
+.d66,
+.d75,
+.d100 {
+  padding: var(--padding);
+  flex: 1;
+}
+
+
+.d100 {
+  width: 100%;
+}
+
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

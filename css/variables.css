@@ -1,11 +1,13 @@
 :root {
 
   /* fonts */
-  --font-family-regular: 'Helvetica', sans-serif;
-  --font-family-mono: 'Space Mono', monospace;
+  --font-family-regular: 'DM Sans', sans-serif;
+  --font-family-serif: 'Crimson Text', serif;
+  /*--font-family-mono: 'Space Mono', monospace;*/
 
   /* colors */
   --color-white: #FFF;
+  --color-gray: #F7F7F7;
   --color-black: #131313;
 
   --color-primary: #E46240;

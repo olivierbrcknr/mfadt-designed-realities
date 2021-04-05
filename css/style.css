@@ -1,14 +1,20 @@
-* {
-  position: relative;
-  box-sizing: border-box;
-}
-
 html, body {
-  font-family: var(--font-family-regular);
+  font-family: var(--font-family-serif);
   color: var(--color-black);
   background: var(--color-white);
-  font-size: 18px;
-  line-height: 1.4;
+  font-size: 24px;
+  line-height: 32px;
+}
+
+h3 {
+  font-family: var(--font-family-regular);
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+p + p {
+  margin-top: 0.5em;
 }
 
 nav {
@@ -16,7 +22,7 @@ nav {
   position: fixed;
   top: 0;
   z-index: 10;
-  font-family: var(--font-family-mono);
+  font-family: var(--font-family-regular);
   color: var(--color-white);
 }
 nav .inner {
@@ -27,7 +33,7 @@ nav .inner {
 
 header {
   background: var(--color-primary);
-  height: 100vh;
+  height: 600px;
   width: 100vw;
 
   display: flex;
@@ -40,4 +46,24 @@ header img {
   zoom: 0.5;
   max-width: 100%;
   max-height: 140vh;
+}
+
+.grayBG {
+  background: var(--color-gray);
+}
+.colorBG {
+  background: var(--color-primary);
+}
+.imageBG {
+  background-size: cover;
+  min-height: 600px;
+  background-position: center center
+}
+
+.objectDesc {
+  max-width: 420px;
+}
+.objectContainer {
+  padding: 0;
+  height: 600px;
 }
