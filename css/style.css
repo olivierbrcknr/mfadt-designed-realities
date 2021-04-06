@@ -1,9 +1,19 @@
+::selection {
+  background: rgba(0,0,0,0.03);
+  color: var(--color-primary);
+}
+
 html, body {
   font-family: var(--font-family-serif);
   color: var(--color-black);
   background: var(--color-white);
   font-size: 24px;
-  line-height: 32px;
+  line-height: 36px;
+}
+
+h2 {
+  font-size: 32px;
+  text-align: center;
 }
 
 h3 {
@@ -15,6 +25,15 @@ h3 {
 
 p + p {
   margin-top: 0.5em;
+}
+
+hr {
+  border: none;
+  text-align: center;
+  width: 100%;
+}
+hr:before {
+  content: "—";
 }
 
 nav {
@@ -35,7 +54,15 @@ header {
   background: var(--color-primary);
   height: 600px;
   width: 100vw;
-
+  color: #FFF;
+}
+.header_inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -63,7 +90,17 @@ header img {
 .objectDesc {
   max-width: 420px;
 }
+
 .objectContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 0;
+}
+
+.objectContainer-50 {
   padding: 0;
   height: 600px;
 }
