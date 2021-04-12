@@ -209,18 +209,24 @@ objLoader.load(
     object.traverse( function ( child ) {
       if ( child instanceof THREE.Mesh ) {
 
-        child.castShadow = true
-        child.receiveShadow = true
+        // child.castShadow = true
+
+        console.log(child.name)
+
 
         switch( child.material.name ){
           case 'Highlight':
             child.material = material_vinylRed
+            child.castShadow = true
             break;
           case 'Darker':
             child.material = material_vinylBrown
+            child.castShadow = true
             break;
           default:
             child.material = material_vinylBeige
+            child.receiveShadow = true
+
             break;
         }
         // console.log(child)
@@ -250,8 +256,8 @@ guiWallFolder.add(wall_directionalLight.position, 'z').min(0).max(100).step(0.1)
 scene_wall.add(wall_directionalLight)
 
 wall_directionalLight.castShadow = true
-wall_directionalLight.shadow.mapSize.width = 1024
-wall_directionalLight.shadow.mapSize.height = 1024
+wall_directionalLight.shadow.mapSize.width = 2048
+wall_directionalLight.shadow.mapSize.height = 2048
 
 wall_directionalLight.shadow.camera.near = 40
 wall_directionalLight.shadow.camera.far = 200
@@ -260,7 +266,7 @@ wall_directionalLight.shadow.camera.top = 60
 wall_directionalLight.shadow.camera.right = 60
 wall_directionalLight.shadow.camera.bottom = -30
 
-wall_directionalLight.shadow.radius = 2
+wall_directionalLight.shadow.radius = 3
 
 
 const wall_directionalLightHelper = new THREE.CameraHelper(wall_directionalLight.shadow.camera)
