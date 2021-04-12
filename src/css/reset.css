@@ -5,6 +5,6 @@ header,section,footer,aside,nav,article,figure { display: block; }
 .preload * { -webkit-transition: none !important; -moz-transition: none !important; -ms-transition: none !important; -o-transition: none !important; }
 
 * {
-	position: relative;
-	box-sizing: border-box;
+  position: relative;
+  box-sizing: border-box;
 }

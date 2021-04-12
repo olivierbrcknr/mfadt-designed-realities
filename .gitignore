@@ -1,3 +1,4 @@
 *.DS_Store
 BU/*
 node_modules/*
+dist/

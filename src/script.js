@@ -33,15 +33,14 @@ const textureLoader = new THREE.TextureLoader()
 const objLoader = new OBJLoader()
 
 // Textures
-
-const matCap_porcelain = textureLoader.load('/textures/matcaps/porcelain.png')
+const matCap_porcelain = textureLoader.load('/textures/matcaps/porcelain.jpg')
 
 
 // Materials
 
-const material_porcelain = new THREE.MeshMatcapMaterial()
-material_porcelain.matcap = matCap_porcelain
-material_porcelain.side = THREE.DoubleSide
+const material_vinylWhite = new THREE.MeshMatcapMaterial()
+material_vinylWhite.matcap = matCap_porcelain
+material_vinylWhite.side = THREE.DoubleSide
 
 
 // Object one — Teapot —————————————————————————————————————————————
@@ -62,11 +61,11 @@ const canvas_teapot = document.querySelector('canvas.object-Teapot')
 const scene_teapot = new THREE.Scene()
 
 const camera_teapot = new THREE.PerspectiveCamera(45, teapot_sizes.width / teapot_sizes.height, 0.1, 100)
-camera_teapot.position.y = 0;
+camera_teapot.position.y = 40;
 camera_teapot.position.z = 65;
 scene_teapot.add(camera_teapot)
 
-guiTeapotFolder.add(camera_teapot.position, 'z', 0, 10, 0.1).name('camera z')
+// guiTeapotFolder.add(camera_teapot.position, 'z', 0, 10, 0.1).name('camera z')
 
 const controls_teapot = new OrbitControls(camera_teapot, canvas_teapot)
 controls_teapot.enableDamping = true
@@ -83,7 +82,7 @@ renderer_teapot.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 let object_teapot = null;
 
 objLoader.load(
-   "/objects/TeaPot.obj",
+  "/objects/TeaPot.obj",
   ( object ) => {
 
     object_teapot = object;
@@ -91,9 +90,11 @@ objLoader.load(
 
     object.traverse( function ( child ) {
       if ( child instanceof THREE.Mesh ) {
-        child.material = material_porcelain;
+        child.material = material_vinylWhite;
       }
     });
+
+    camera_teapot.lookAt(object.position)
 
     scene_teapot.add( object );
   },
@@ -145,4 +146,3 @@ window.addEventListener('resize', () => {
   renderer_teapot.setSize(teapot_sizes.width, teapot_sizes.height)
   renderer_teapot.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
-

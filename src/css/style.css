@@ -81,6 +81,13 @@ header img {
 .colorBG {
   background: var(--color-primary);
 }
+.gradientBG {
+  background: linear-gradient(
+    180deg,
+    #7E3320 0%,
+    #E6694B 100%
+  );
+}
 .imageBG {
   background-size: cover;
   min-height: 600px;
