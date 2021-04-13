@@ -10,6 +10,7 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import * as dat from 'dat.gui'
 
 const isDev = (process.env.NODE_ENV === 'development')
+const mobileBreakPoint = 719
 
 // Debug
 const gui = new dat.GUI()
@@ -82,8 +83,9 @@ guiTeapotFolder.add(objectScales, 'teapot', 0, 0.1, 0.001).onChange(()=>{
 })
 
 const teapot_sizes = {
-  width: sizes.width/2,
-  height: 600
+  width: (sizes.width <= mobileBreakPoint ? sizes.width : sizes.width/2),
+  height: (sizes.width <= mobileBreakPoint ? 400 : 600),
+  isInView: false
 }
 
 const canvas_teapot = document.querySelector('canvas.object-Teapot')
@@ -158,11 +160,12 @@ guiWallFolder.add(objectScales, 'wall', 10, 100, 0.01).onChange(()=>{
 
 const wall_sizes = {
   width: sizes.width,
-  height: 600,
+  height: (sizes.width <= mobileBreakPoint ? 200 : 600),
   cameraY_init: 17,
   cameraY: 17,
   cameraTarget: new THREE.Vector3(0,17,0),
-  cameraMovementSpeed: 10
+  cameraMovementSpeed: 10,
+  isInView: false,
 }
 
 
@@ -210,9 +213,6 @@ objLoader.load(
       if ( child instanceof THREE.Mesh ) {
 
         // child.castShadow = true
-
-        console.log(child.name)
-
 
         switch( child.material.name ){
           case 'Highlight':
@@ -285,22 +285,25 @@ const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
 
-    if( object_teapot ){
+    // console.time('tick')
+
+    // Teapot
+    if( teapot_sizes.isInView && object_teapot ){
       object_teapot.rotation.y = 0.15 * elapsedTime
+      controls_teapot.update()
+      renderer_teapot.render(scene_teapot, camera_teapot)
     }
 
-    // Controls
-    controls_teapot.update()
-    // controls_wall.update()
+    // Wall
+    if( wall_sizes.isInView ) {
+      camera_wall.position.x = Math.sin( wall_cursor.x * Math.PI/10 ) * 100
+      camera_wall.position.z = Math.cos( wall_cursor.x * Math.PI/10 ) * 100
+      camera_wall.position.y = wall_cursor.y * wall_sizes.cameraMovementSpeed + wall_sizes.cameraY
+      camera_wall.lookAt(wall_sizes.cameraTarget)
+      renderer_wall.render(scene_wall, camera_wall)
+    }
 
-    camera_wall.position.x = Math.sin( wall_cursor.x * Math.PI/10 ) * 100
-    camera_wall.position.z = Math.cos( wall_cursor.x * Math.PI/10 ) * 100
-    camera_wall.position.y = wall_cursor.y * wall_sizes.cameraMovementSpeed + wall_sizes.cameraY
-    camera_wall.lookAt(wall_sizes.cameraTarget)
-
-    // Renderers
-    renderer_teapot.render(scene_teapot, camera_teapot)
-    renderer_wall.render(scene_wall, camera_wall)
+    // console.timeEnd('tick')
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
@@ -316,7 +319,11 @@ window.addEventListener('resize', () => {
   sizes.width = window.innerWidth
   sizes.height = window.innerHeight
 
-  teapot_sizes.width = sizes.width/2
+  if( sizes.width <= mobileBreakPoint ){
+    teapot_sizes.width = sizes.width
+  }else{
+    teapot_sizes.width = sizes.width/2
+  }
   wall_sizes.width = sizes.width
 
   // Update cameras
@@ -335,19 +342,29 @@ window.addEventListener('resize', () => {
 })
 
 
-window.addEventListener('scroll', () => {
 
-
-
-  let cW_top = canvas_wall.getBoundingClientRect().top
-  let cW_bottom = canvas_wall.getBoundingClientRect().bottom
-  let cw_height = canvas_wall.getBoundingClientRect().height
-
-
+let checkIfIsInView = (obj, isInViewObj, callback = () => {}) => {
+  let cW_top = obj.getBoundingClientRect().top
+  let cW_bottom = obj.getBoundingClientRect().bottom
+  let cw_height = obj.getBoundingClientRect().height
 
   if( cW_top <= sizes.height && cW_bottom >= 0 ){
-    wall_sizes.cameraY = wall_sizes.cameraY_init * ( cW_top/cw_height + 1) * 2
+    isInViewObj.isInView=true
+    let ratio = cW_top/cw_height
+    callback(ratio)
+  }else{
+    isInViewObj.isInView=false
   }
+}
 
+
+
+window.addEventListener('scroll', () => {
+
+  checkIfIsInView( canvas_wall, wall_sizes, (ratio)=>{
+    wall_sizes.cameraY = wall_sizes.cameraY_init * ( ratio + 1) * 2 + 1
+  } )
+
+  checkIfIsInView( canvas_teapot, teapot_sizes)
 
 })

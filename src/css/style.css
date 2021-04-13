@@ -52,7 +52,9 @@ nav .inner {
 
 header {
   background: var(--color-primary);
-  height: 600px;
+  min-height: 400px;
+  height: 70vh;
+  max-height: 600px;
   width: 100vw;
   color: #FFF;
 }
@@ -73,6 +75,13 @@ header img {
   zoom: 0.5;
   max-width: 100%;
   max-height: 140vh;
+}
+
+footer{
+  padding: 50px 0;
+  font-family: var(--font-family-regular);
+  font-size: 12px;
+  color: #AAA;
 }
 
 .grayBG {
@@ -110,4 +119,24 @@ header img {
 .objectContainer-50 {
   padding: 0;
   height: 600px;
+}
+
+@media only screen and (max-width: 719px) {
+
+  html, body {
+    font-size: 22px;
+    line-height: 32px;
+  }
+  h2 {
+    font-size: 23px;
+  }
+
+  .objectContainer-50 {
+    height: 400px;
+  }
+
+  .objectDesc {
+    padding: 20px 0;
+  }
+
 }
