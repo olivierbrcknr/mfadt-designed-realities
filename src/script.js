@@ -72,7 +72,10 @@ const sceneFolder = gui.addFolder('Scenes')
 const debugObject = {}
 
 const isDev = (process.env.NODE_ENV === 'development')
-let isOpen = true
+
+if( !isDev ){
+  gui.hide()
+}
 
 let infoHeight = 0
 
