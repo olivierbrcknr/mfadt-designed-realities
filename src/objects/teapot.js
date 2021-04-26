@@ -1,6 +1,9 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
+import { material_porcelain } from './materials.js'
+
+
 let renderer = null;
 let object_teapot = null;
 let controls = null;
@@ -15,7 +18,7 @@ const objectScales = {
   wall: 20
 }
 
-const init = ( actualRenderer, actualScene, camera, canvas, actualGui, sizes, txL, objL ) => {
+const init = ( actualRenderer, actualScene, camera, canvas, actualGui, sizes, objL ) => {
 
   renderer = actualRenderer
   gui = actualGui
@@ -23,23 +26,8 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, sizes, tx
   folder.isOpen = true
   scene = actualScene
 
-  
-  // Textures
-  const matCap_porcelain = txL.load('/textures/matcaps/porcelain.jpg')
-
-  // Materials
-  const material_vinylWhite = new THREE.MeshMatcapMaterial()
-  material_vinylWhite.matcap = matCap_porcelain
-  material_vinylWhite.side = THREE.DoubleSide
-
-  folder.add(objectScales, 'teapot', 0, 0.1, 0.001).onChange(()=>{
-    object_teapot.scale.set(objectScales.teapot,objectScales.teapot,objectScales.teapot)
-  })
-
-
   camera.position.y = 40;
   camera.position.z = 65;
-  
 
   controls = new OrbitControls(camera, canvas)
   controls.enableDamping = true
@@ -54,7 +42,7 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, sizes, tx
 
       object.traverse( function ( child ) {
         if ( child instanceof THREE.Mesh ) {
-          child.material = material_vinylWhite;
+          child.material = material_porcelain
         }
       });
 
@@ -62,7 +50,7 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, sizes, tx
 
       camera.lookAt(object.position)
       scene.add( object );
-    },
+    }
   );
 
 }

@@ -24,6 +24,14 @@ a:hover {
   border: none;
 }
 
+hr {
+  display: block;
+  max-width: 1200px;
+  margin: 0 auto;
+  border: none;
+  border-top: solid 1px #ccc;
+}
+
 .dg.ac {
   z-index: 11 !important;
 }
@@ -37,7 +45,12 @@ header {
   pointer-events: none;
   height: calc( 100vh + 120px );
   padding: 0 20px;
+  transition: height 1s;
 }
+.isProject header {
+  height: calc( 100vh + 100px - 200px );
+}
+
 header .columnContainer {
   margin: 10px auto;
   position: sticky;
@@ -46,6 +59,11 @@ header .columnContainer {
 header .title {
   cursor: pointer;
   pointer-events: initial;
+}
+.objectTitle {
+  margin-left: 0.2em;
+  display: inline;
+  font-style: italic;
 }
 
 footer {
@@ -62,9 +80,20 @@ footer {
   );
   width: 100vw;
   z-index: 0;
+  transition: height 1s;
 }
 #threeCanvas.--isClick {
   cursor: pointer;
+}
+
+#gravitySelector {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 2;
+}
+#gravitySelector.isHidden {
+  display: none !important;
 }
 
 #projectList {
@@ -87,10 +116,25 @@ footer {
 .project:hover {
   color: var(--color-primary);
 }
+.project.notReadyYet {
+  cursor: default;
+  color: #ccc !important;
+}
 
 .project_num,
 .project_title {
   font-family: var(--font-family-regular);
   font-size: 14px;
   font-weight: 500;
+}
+
+#projectDescription {
+  padding: 50px 20px;
+}
+
+
+@media screen and (max-width: 720px) {
+  .columnContainer {
+    display: block
+  }
 }

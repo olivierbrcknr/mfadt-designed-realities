@@ -15,7 +15,7 @@ const objectsStatic = []
 const objectScales = {}
 objectScales.wall = 3
 
-const init = ( actualRenderer, actualScene, actualCamera, canvas, actualGui, sizes, txL, objL ) => {
+const init = ( actualRenderer, actualScene, actualCamera, canvas, actualGui, sizes, objL ) => {
 
   renderer = actualRenderer
   gui = actualGui
@@ -23,15 +23,6 @@ const init = ( actualRenderer, actualScene, actualCamera, canvas, actualGui, siz
   folder.isOpen = true
   scene = actualScene
   camera = actualCamera
-
-  
-  // Textures
-  const matCap_porcelain = txL.load('/textures/matcaps/porcelain.jpg')
-
-  // Materials
-  const material_vinylWhite = new THREE.MeshMatcapMaterial()
-  material_vinylWhite.matcap = matCap_porcelain
-  material_vinylWhite.side = THREE.DoubleSide
 
   camera.position.x = 0;
   camera.position.y = 3;

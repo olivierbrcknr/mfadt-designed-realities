@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import CANNON from 'cannon'
 
-import { material_vinylBeige, material_vinylBrown, material_vinylRed } from './materials.js'
+import { material_vinylBeige, material_vinylBrown, material_vinylRed, material_porcelain, material_transparent, material_glossyRed, material_hover } from './materials.js'
 import { DirectionalLightHelper } from 'three'
 
 let renderer = null
@@ -15,12 +15,9 @@ let cursor = null
 let camera = null
 let canvas = null
 
-let callback = () => {}
+let gravitySelector = null
 
-const objectScales = {
-  teapot: 0.02,
-  wall: 20
-}
+let callback = () => {}
 
 const objectsStatic = [] // mesh (non physics)
 const objectsToUpdate = [] // pyhsics
@@ -29,8 +26,8 @@ const objectsToUpdate = [] // pyhsics
 // set physics world
 const world = new CANNON.World()
 world.broadphase = new CANNON.SAPBroadphase( world )
-world.allowSleep = true
-world.gravity.set( 0, - 9.82, 0 )
+// world.allowSleep = true
+world.gravity.set( 0, -9.82, 0 )
 
 const defaultMaterial = new CANNON.Material('default')
 const defaultContactMaterial = new CANNON.ContactMaterial(
@@ -48,31 +45,59 @@ world.defaultContactMaterial = defaultContactMaterial
 // box
 const boxGeometry = new THREE.BoxGeometry( 1, 1, 1 )
 
-const createBox = ( width, height, depth, position, optName ) => {
+const createBox = ( width, height, depth, position, optName, hasObj = null, mat = null, totalMultiplier) => {
 
     let randomPosition = {
-        x: position.x + Math.random()-0.5,
-        y: position.y + Math.random()-0.5,
-        z: position.z + Math.random()-0.5
+        x: position.x + ( Math.random()-0.5 ) * 2,
+        y: position.y + ( Math.random()-0.5 ) * 2,
+        z: position.z + ( Math.random()-0.5 ) * 2
+    }
+
+    let multiplier = hasObj ? 1.1 : 1 
+    multiplier = totalMultiplier ? (multiplier * totalMultiplier) : multiplier
+
+    let objectMesh = null
+
+    if( hasObj ){
+
+        objectMesh = hasObj
+    
+        hasObj.traverse( function ( child ) {
+            if ( child instanceof THREE.Mesh ) {
+                if( mat !== false ){
+                    if( mat ){
+                        child.material = mat
+                    }else{
+                        child.material = material_vinylBrown
+                    }
+                }
+
+                child.castShadow = true
+            }
+        });
+
+        objectMesh.scale.set( totalMultiplier, totalMultiplier, totalMultiplier )
+        objectMesh.position.copy( randomPosition )
+
+        scene.add(objectMesh)
     }
 
     // THREE mesh
     const mesh = new THREE.Mesh(
         boxGeometry,
-        material_vinylBrown
+        ( !hasObj && !mat ) ? material_vinylBrown : material_transparent
     )
-    mesh.scale.set( width, height, depth )
-    mesh.castShadow = true
+    mesh.scale.set( width * multiplier, height * multiplier, depth * multiplier )
+    mesh.castShadow = objectMesh ? false : true
     mesh.position.copy( randomPosition )
 
     if( optName ){
         mesh.name = optName
     }
-
     scene.add(mesh)
 
     // CANNON body
-    const shape = new CANNON.Box( new CANNON.Vec3( width/2, height/2, depth/2 ) )
+    const shape = new CANNON.Box( new CANNON.Vec3( (width*multiplier)/2, (height*multiplier)/2, (depth*multiplier)/2 ) )
     const body = new CANNON.Body({
         mass: 2,
         position: new CANNON.Vec3(0,3,0),
@@ -91,13 +116,131 @@ const createBox = ( width, height, depth, position, optName ) => {
 
     objectsToUpdate.push({
         body,
-        mesh
+        mesh,
+        objectMesh
     })
 
 }
 
+const sphereGeometry = new THREE.SphereGeometry( 1, 20, 20 )
+
+const createSphere = (radius, position, optName, hasObj = null, mat = null, totalMultiplier = 1) => {
+
+    let randomPosition = {
+        x: position.x + ( Math.random()-0.5 ) * 2,
+        y: position.y + ( Math.random()-0.5 ) * 2,
+        z: position.z + ( Math.random()-0.5 ) * 2
+    }
+
+    let multiplier = hasObj ? 1.1 : 1 
+    multiplier = totalMultiplier ? (multiplier * totalMultiplier) : multiplier
+
+    let objectMesh = null
+
+    if( hasObj ){
+
+        objectMesh = hasObj
+    
+        hasObj.traverse( function ( child ) {
+            if ( child instanceof THREE.Mesh ) {
+                if( mat !== false ){
+                    if( mat ){
+                        child.material = mat
+                    }else{
+                        child.material = material_vinylBrown
+                    }
+                }
+
+                child.castShadow = true
+            }
+        });
+
+        objectMesh.scale.set( totalMultiplier, totalMultiplier, totalMultiplier )
+        objectMesh.position.copy( randomPosition )
+
+        scene.add(objectMesh)
+    }
+
+    // THREE mesh
+    const mesh = new THREE.Mesh(
+        sphereGeometry,
+        ( !hasObj && !mat ) ? material_vinylBrown : material_transparent
+    )
+    mesh.scale.set( radius*multiplier, radius*multiplier, radius*multiplier )
+    mesh.castShadow = true
+    mesh.position.copy( randomPosition )
+    scene.add(mesh)
+
+    // CANNON body
+    const shape = new CANNON.Sphere(radius)
+    const body = new CANNON.Body({
+        mass: 1,
+        position: new CANNON.Vec3(0,3,0),
+        shape,
+        material: defaultMaterial
+    })
+    body.position.copy( randomPosition )
+
+    world.add( body )
+
+    objectsToUpdate.push({
+        body,
+        mesh,
+        objectMesh
+    })
+}
+
+const createWall = ( position, q1, q2, q3, rad1, visible = false ) => {
+
+    // floor - physics
+    const shape = new CANNON.Plane() // is infinite
+    const body = new CANNON.Body()
+    body.mass = 0 // object is static
+    body.addShape( shape ) 
+    body.quaternion.setFromAxisAngle(  // only can do quaternion
+        new CANNON.Vec3(q1,q2,q3),
+        rad1
+    )
+    world.addBody( body )
+    body.position.copy( position )
+
+    scene.background = new THREE.Color('#CCC3B6');
+
+    // floor - three
+    if( visible ){
+        const mesh = new THREE.Mesh(
+            new THREE.PlaneGeometry(50, 50),
+            material_vinylBeige
+            // new THREE.MeshStandardMaterial({
+            //     transparent: true,
+            //     opacity: 0.2,
+            //     color: '#fff'
+            // })
+        )
+        mesh.rotation.x = q1 * rad1
+        mesh.rotation.y = q2 * rad1
+        mesh.rotation.z = q3 * rad1
+
+        mesh.receiveShadow = true
+        mesh.position.copy( position )
+        scene.add(mesh)
+
+        objectsStatic.push({
+            body: body,
+            mesh: mesh
+        })
+    }else{
+        objectsStatic.push({
+            body: body,
+            mesh: null
+        })
+    }
+
+
+}
+
 // Init function 
-const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGui, sizes, txL, objL, actualRayCaster, hasCallBack=()=>{} ) => {
+const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGui, sizes, txL, gltfL, actualRayCaster, hasCallBack=()=>{} ) => {
 
     renderer = actualRenderer
     gui = actualGui
@@ -107,48 +250,35 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
     scene = actualScene
     raycaster = actualRayCaster
     camera = actualCamera
-
     callback = hasCallBack
+
+    gravitySelector = document.querySelector('#gravitySelector')
+    gravitySelector.addEventListener('click',gravClick)
+    gravitySelector.classList.remove('isHidden')
 
     // Update existing objects
     renderer.shadowMap.enabled = true
     renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
-    camera.position.y = 10;
-    camera.position.x = 7;
-    camera.position.z = 7;
+    camera.position.y = 10
+    camera.position.x = 7
+    camera.position.z = 7
+
+    world.gravity.set( 0, -9.82, 0 )
 
     folder.add( camera, 'zoom', 0, 10, 0.1).onChange(()=>{
         camera.updateProjectionMatrix()
     })
+    folder.add( camera.position, 'z', 0, 30, 0.01).onChange()
 
-    // floor - physics
-    const floorShape = new CANNON.Plane() // is infinite
-    const floorBody = new CANNON.Body()
-    floorBody.mass = 0 // object is static
-    floorBody.addShape( floorShape ) 
-    floorBody.quaternion.setFromAxisAngle(  // only can do quaternion
-        new CANNON.Vec3(-1,0,0),
-        Math.PI / 2
-    )
-    world.addBody( floorBody )
-
-    // floor - three
-    const floor = new THREE.Mesh(
-        new THREE.PlaneGeometry(30, 50),
-        material_vinylBeige
-    )
-    floor.rotation.x = - Math.PI * 0.5
-    floor.rotation.z = - Math.PI * 0.25
-    floor.receiveShadow = true
-    scene.add(floor)
-
-    objectsStatic.push({
-        body: floorBody,
-        mesh: floor
-    })
-
-    camera.lookAt(floor.position)
+    createWall( {x:0,y:0,z:-6}, 0, 0, 1, Math.PI * 0.5 , true) // z neg
+    // createWall( {x:0,y:0,z: 8}, 0, 0, -1, -Math.PI * 0.5 , false) // z pos
+    createWall( {x:-6,y:0,z:0}, 0, 1, 0, Math.PI/ 2 , true) // x neg
+    createWall( {x:6,y:0,z:0}, 0, -1, 0, Math.PI/ 2 , false) // x pos
+    createWall( {x:0,y:0,z:0}, -1, 0, 0, Math.PI/ 2 , true) // y neg (floor)
+    createWall( {x:0,y:5,z:0}, 1, 0, 0, Math.PI/ 2 , false) // y pos
+    
+    camera.lookAt(new THREE.Vector3(0,0,0))
 
     // lights
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.9)
@@ -185,23 +315,83 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
         mesh: directionalLightCameraHelper
     })
 
-    // Room
-    createBox(3,3,3,{x:4,y:5,z:-2},'room')
+    // Room / plant
+    // createBox(3,3,3,{x:4,y:5,z:-2},'room')
+    gltfL.load(
+        '/objects/plant.gltf',
+        (gltf) =>
+        {
+            createBox(0.2,0.2,0.2,{x:2,y:3,z:0},'room', gltf.scene, false, 3)
+        }
+    )
 
     // teapot
-    createBox(0.5,0.5,0.5,{x:2,y:3,z:4},'teapot')
-
+    gltfL.load(
+        '/objects/teapot_low.gltf',
+        (gltf) =>
+        {
+            createBox(1,1,1,{x:1,y:3,z:3},'teapot', gltf.scene, material_porcelain, 0.5)
+        }
+    )
+    
     // chair
-    createBox(1,4,1,{x:-2,y:3,z:-4},'chair')
+    gltfL.load(
+        '/objects/chair.gltf',
+        (gltf) =>
+        {
+            createBox(
+                0.43,2.73,0.48,
+                {x:-2,y:3,z:-4},
+                'chair', 
+                gltf.scene, 
+                false,
+                1.5)
+        }
+    )
+    // createBox(1,4,1,{x:-2,y:3,z:-4},'chair')
 
     // coins
-    createBox(2,0.5,2,{x:-4,y:3,z:2},'wall')
+    // createBox(2,0.5,2,{x:-4,y:3,z:2},'wall')
+    gltfL.load(
+        '/objects/coins.gltf',
+        (gltf) =>
+        {
+            createBox(
+                0.98,0.36,0.62,
+                {x:-2,y:3,z:-4},
+                'wall', 
+                gltf.scene, 
+                material_vinylRed,
+                1.5)
+        }
+    )
 
     // compass
-    createBox(1,1,1,{x:0,y:3,z:0},'compass')
+    // createBox(1,1,1,{x:0,y:3,z:0},'compass')
+    gltfL.load(
+        '/objects/compass.gltf',
+        (gltf) =>
+        {
+            createSphere(
+                0.8,
+                {x:0,y:3,z:0},
+                'compass', 
+                gltf.scene, 
+                false, 1)
+        }
+    )
+
+    // blurb
+    gltfL.load(
+        '/objects/blurb.gltf',
+        (gltf) =>
+        {
+            createBox(2.6,1.4,2.55,{x:0,y:4,z:2},'enrance', gltf.scene, material_glossyRed, 0.5)
+        }
+    )
 
 
-    window.addEventListener('click', checkIfClick)    
+    canvas.addEventListener('click', checkIfClick)    
 }
 
 // Animations ————————————————————————————————————————————————————————
@@ -232,6 +422,12 @@ const tick = ( elapsedTime ) =>
     for( const object of objectsToUpdate ){
         object.mesh.position.copy( object.body.position )
         object.mesh.quaternion.copy( object.body.quaternion )
+
+        if( object.objectMesh ){
+            object.objectMesh.position.copy( object.body.position )
+            object.objectMesh.quaternion.copy( object.body.quaternion )
+        }
+
         objectsToTest.push( object.mesh )
     }
 
@@ -239,14 +435,18 @@ const tick = ( elapsedTime ) =>
 
         raycaster.setFromCamera(cursor, camera)
         const intersects = raycaster.intersectObjects( objectsToTest )
-        for ( const object of objectsToTest ){
+        for ( const object of objectsToUpdate ){
             // object.material.color.set('#A69171')
-            object.material = material_vinylBrown
+            if( object.objectMesh ){
+                object.mesh.material = material_transparent
+            }else{
+                object.mesh.material = material_vinylBrown
+            }
         }
 
         for ( const intersect of intersects ){
             // intersect.object.scale.set(1.2,1.2,1.2)
-            intersect.object.material = material_vinylRed
+            intersect.object.material = material_hover
         }
 
         if( intersects.length ){
@@ -268,7 +468,30 @@ const tick = ( elapsedTime ) =>
 const checkIfClick = () => { 
     if( currentIntersect ){
         callback(currentIntersect.object.name)
+    }else{
+        for( const object of objectsToUpdate ){
+            object.body.applyImpulse( new CANNON.Vec3(0, 7, 0), object.body.position )
+        }
     }
+}
+
+const gravClick = (e) => {
+    if( e.target.classList.contains('up') ){
+        world.gravity.set( 0, 9.82, 0 )
+    }
+    if( e.target.classList.contains('down') ){
+        world.gravity.set( 0, -9.82, 0 )
+    }
+    if( e.target.classList.contains('left') ){
+        world.gravity.set( 0, 0, -9.82 )
+    }
+    if( e.target.classList.contains('right') ){
+        world.gravity.set( -9.82, 0, 0 )
+    }
+    if( e.target.classList.contains('front') ){
+        world.gravity.set( 9.82, 0, 0 )
+    }
+
 }
 
 // Remove
@@ -277,8 +500,13 @@ const remove = () => {
     canvas.classList.remove('--isClick')
 
     console.log('Remove IntoScene')
-    window.removeEventListener('click', checkIfClick) 
+    canvas.removeEventListener('click', checkIfClick) 
+    gravitySelector.removeEventListener('click',gravClick)
+    gravitySelector.classList.add('isHidden')
+    
     currentIntersect = null
+
+    scene.background = null
 
     for( const object of objectsStatic ){
         if( object.body ){
@@ -287,11 +515,17 @@ const remove = () => {
         if( object.mesh ){
             scene.remove( object.mesh )
         }
+        if( object.objectMesh ){
+            scene.remove( object.objectMesh )
+        }
     }
 
     for( const object of objectsToUpdate ){
         world.removeBody( object.body )
         scene.remove( object.mesh )
+        if( object.objectMesh ){
+            scene.remove( object.objectMesh )
+        }
     }
 
     gui.removeFolder( folder )
