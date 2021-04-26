@@ -2,43 +2,43 @@
     {
         "name": "The Entrance",
         "slug": "entrance",
-        "desc": "On April 5, unless you have priority registration status (e.g. you petitioned to graduate at the end of the summer). You will receive an email from academic advising with more details, so please check your email as we approach the date.",
+        "desc": "…",
         "active": false
     },
     {
         "name": "The Museum",
         "slug": "museum",
-        "desc": "On April 5, unless you have priority registration status (e.g. you petitioned to graduate at the end of the summer). You will receive an email from academic advising with more details, so please check your email as we approach the date.",
+        "desc": "…",
         "active": false
     },
     {
         "name": "The Teapot",
         "slug": "teapot",
-        "desc": "On April 5, unless you have priority registration status (e.g. you petitioned to graduate at the end of the summer). You will receive an email from academic advising with more details, so please check your email as we approach the date.",
+        "desc": "Sarah brought cake. Neither could I see her nor did I know if she actually existed, but still, I appreciated the gesture.",
         "active": true
     },
     {
         "name": "The Furniture",
         "slug": "furniture",
-        "desc": "On April 5, unless you have priority registration status (e.g. you petitioned to graduate at the end of the summer). You will receive an email from academic advising with more details, so please check your email as we approach the date.",
+        "desc": "…",
         "active": false
     },
     {
         "name": "The Wall",
         "slug": "wall",
-        "desc": "On April 5, unless you have priority registration status (e.g. you petitioned to graduate at the end of the summer). You will receive an email from academic advising with more details, so please check your email as we approach the date.",
+        "desc": "“I don’t know anymore where I can go.” Marcus said. The floor collapsed below him while another appeared, but where the wall was before. Confused, he took a step to the side, or down, depending on the angle.",
         "active": true
     },
     {
         "name": "The Objects",
         "slug": "objects",
-        "desc": "On April 5, unless you have priority registration status (e.g. you petitioned to graduate at the end of the summer). You will receive an email from academic advising with more details, so please check your email as we approach the date.",
+        "desc": "They were strange. I could not grasp what they were supposed to do. Some were levitating, but also they weren’t.",
         "active": false
     },
     {
         "name": "The Room",
         "slug": "room",
-        "desc": "On April 5, unless you have priority registration status (e.g. you petitioned to graduate at the end of the summer). You will receive an email from academic advising with more details, so please check your email as we approach the date.",
-        "active": false
+        "desc": "My whole world happens within this room. Am I still inside? Is this the new outside? What does ‘outside’ even mean?",
+        "active": true
     }
 ]

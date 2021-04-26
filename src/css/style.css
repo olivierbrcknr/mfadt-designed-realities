@@ -96,6 +96,29 @@ footer {
   display: none !important;
 }
 
+.isProject #projectInfo {
+  height: 200px;
+  opacity: 1;
+}
+#projectInfo {
+  height: 0px;
+  opacity: 0;
+  transition: all 0.8s;
+  padding: 0 20px;
+}
+#projectInfo .columnContainer {
+  margin-top: 20px;
+}
+
+.afterProjectInfo {
+  opacity: 0;
+  transition: all 0.8s 0.4s;
+}
+.isProject .afterProjectInfo{
+  opacity: 1;
+  transition: all 0.2s 0s;
+}
+
 #projectList {
   padding: 100px 20px;
 }

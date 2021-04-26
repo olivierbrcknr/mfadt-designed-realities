@@ -4,11 +4,16 @@ const textureLoader = new THREE.TextureLoader()
 
 // Textures
 const matCap_porcelain = textureLoader.load('/textures/matcaps/porcelain.jpg')
+const matCap_porcelain_Beige = textureLoader.load('/textures/matcaps/porcelain_beige.jpg')
 
 // Materials
 const material_porcelain = new THREE.MeshMatcapMaterial()
 material_porcelain.matcap = matCap_porcelain
 material_porcelain.side = THREE.DoubleSide
+
+const material_porcelain_Beige = new THREE.MeshMatcapMaterial()
+material_porcelain_Beige.matcap = matCap_porcelain_Beige
+material_porcelain_Beige.side = THREE.DoubleSide
 
 // Basic
 const material_vinylBeige = new THREE.MeshStandardMaterial()
@@ -43,6 +48,7 @@ export {
     material_vinylBrown, 
     material_vinylRed, 
     material_porcelain,
+    material_porcelain_Beige,
     material_transparent,
     material_glossyRed,
     material_hover

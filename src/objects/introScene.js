@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import CANNON from 'cannon'
 
-import { material_vinylBeige, material_vinylBrown, material_vinylRed, material_porcelain, material_transparent, material_glossyRed, material_hover } from './materials.js'
+import { material_vinylBeige, material_vinylBrown, material_vinylRed, material_porcelain_Beige, material_transparent, material_glossyRed, material_hover } from './materials.js'
 import { DirectionalLightHelper } from 'three'
 
 let renderer = null
@@ -99,7 +99,7 @@ const createBox = ( width, height, depth, position, optName, hasObj = null, mat 
     // CANNON body
     const shape = new CANNON.Box( new CANNON.Vec3( (width*multiplier)/2, (height*multiplier)/2, (depth*multiplier)/2 ) )
     const body = new CANNON.Body({
-        mass: 2,
+        mass: 1,
         position: new CANNON.Vec3(0,3,0),
         shape,
         material: defaultMaterial
@@ -209,7 +209,7 @@ const createWall = ( position, q1, q2, q3, rad1, visible = false ) => {
     // floor - three
     if( visible ){
         const mesh = new THREE.Mesh(
-            new THREE.PlaneGeometry(50, 50),
+            new THREE.PlaneGeometry(15, 15),
             material_vinylBeige
             // new THREE.MeshStandardMaterial({
             //     transparent: true,
@@ -260,9 +260,9 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
     renderer.shadowMap.enabled = true
     renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
-    camera.position.y = 10
-    camera.position.x = 7
-    camera.position.z = 7
+    camera.position.y = 6
+    camera.position.x = 5
+    camera.position.z = 5
 
     world.gravity.set( 0, -9.82, 0 )
 
@@ -330,7 +330,14 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
         '/objects/teapot_low.gltf',
         (gltf) =>
         {
-            createBox(1,1,1,{x:1,y:3,z:3},'teapot', gltf.scene, material_porcelain, 0.5)
+            createBox(
+                1,1,1,
+                {x:1,y:3,z:2},
+                'teapot', 
+                gltf.scene, 
+                material_porcelain_Beige, 
+                0.5
+            )
         }
     )
     
@@ -386,7 +393,14 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
         '/objects/blurb.gltf',
         (gltf) =>
         {
-            createBox(2.6,1.4,2.55,{x:0,y:4,z:2},'enrance', gltf.scene, material_glossyRed, 0.5)
+            createBox(
+                2.6,1.4,2.55,
+                {x:-2,y:4,z:2},
+                'entrance', 
+                gltf.scene, 
+                material_vinylRed, 
+                0.5
+            )
         }
     )
 

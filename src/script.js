@@ -21,18 +21,19 @@ const canvas = document.querySelector('#threeCanvas')
 const header = document.querySelector('#header .title')
 const titleDOM = header.querySelector(".objectTitle")
 const projectList = document.querySelector('#projectList')
+const projectDesc = document.querySelector('#projectInfo')
 
 let isIntro = true
 let currentSceneName = 'intro'
 
-let dataIndex = 1
-for( const info of objectData ){
+const createProjectInfoRow = ( container, info ) => {
 
   const listItem = document.createElement("div")
   listItem.classList.add("project")
   listItem.classList.add("columnContainer")
   listItem.addEventListener("click",()=>{
     switchScene( info.slug )
+    window.scrollTo({top: 0, behavior: 'smooth'});
   })
   if( info.active === false ){
     listItem.classList.add("notReadyYet")
@@ -53,7 +54,15 @@ for( const info of objectData ){
   listItem_desc.innerHTML = info.desc
   listItem.appendChild(listItem_desc)
 
-  projectList.appendChild(listItem)
+  container.appendChild(listItem)
+
+}
+
+let dataIndex = 1
+for( const info of objectData ){
+
+  createProjectInfoRow( projectList , info )
+  
   dataIndex++
 }
 
@@ -198,6 +207,11 @@ const switchScene = (name) => {
       titleDOM.innerHTML = "— "+currentSceneName
       infoHeight = 200
       document.querySelector('#wrapper').classList.add('isProject')
+
+      projectDesc.innerHTML = ""
+      const currInfo = objectData.find( i => i.slug === currentSceneName )
+      createProjectInfoRow( projectDesc , currInfo )
+
     }
 
     updateRenderSizes()
