@@ -1,0 +1,37 @@
+[
+    {
+        "name": "The Entrance",
+        "slug": "entrance",
+        "desc": "On April 5, unless you have priority registration status (e.g. you petitioned to graduate at the end of the summer). You will receive an email from academic advising with more details, so please check your email as we approach the date."
+    },
+    {
+        "name": "The Museum",
+        "slug": "museum",
+        "desc": "On April 5, unless you have priority registration status (e.g. you petitioned to graduate at the end of the summer). You will receive an email from academic advising with more details, so please check your email as we approach the date."
+    },
+    {
+        "name": "The Teapot",
+        "slug": "teapot",
+        "desc": "On April 5, unless you have priority registration status (e.g. you petitioned to graduate at the end of the summer). You will receive an email from academic advising with more details, so please check your email as we approach the date."
+    },
+    {
+        "name": "The Furniture",
+        "slug": "furniture",
+        "desc": "On April 5, unless you have priority registration status (e.g. you petitioned to graduate at the end of the summer). You will receive an email from academic advising with more details, so please check your email as we approach the date."
+    },
+    {
+        "name": "The Wall",
+        "slug": "teapot",
+        "desc": "On April 5, unless you have priority registration status (e.g. you petitioned to graduate at the end of the summer). You will receive an email from academic advising with more details, so please check your email as we approach the date."
+    },
+    {
+        "name": "The Objects",
+        "slug": "objects",
+        "desc": "On April 5, unless you have priority registration status (e.g. you petitioned to graduate at the end of the summer). You will receive an email from academic advising with more details, so please check your email as we approach the date."
+    },
+    {
+        "name": "The Room",
+        "slug": "room",
+        "desc": "On April 5, unless you have priority registration status (e.g. you petitioned to graduate at the end of the summer). You will receive an email from academic advising with more details, so please check your email as we approach the date."
+    }
+]

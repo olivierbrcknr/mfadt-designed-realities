@@ -6,7 +6,6 @@
     <title>six sides</title>
 
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
 
 </head>
@@ -14,100 +13,51 @@
 
 <div id="wrapper">
 
-  <header>
+  <canvas id="threeCanvas"></canvas>
 
-    <div class="objectContainer object-Intro"></div>
+  <header id="header">
+    <div class="columnContainer">
+      <div class="empty"></div>
+      <div class="empty"></div>
 
-    <div class="header_inner">
-
-      six sides
-
+      <div class="title">
+        six sides
+      </div>
     </div>
-
   </header>
+  
+  <div id="projectList">
 
-  <div class="rowText">
-    <div class="d100">
-      <h3 style="text-align: center;">
-        Introduction
-      </h3>
-      <p>
-        The man who entered was a strange and impressive figure. His slow, limping step and bowed shoulders gave the appearance of decrepitude, and yet his hard, deep-lined, craggy features, and his enormous limbs showed that he was possessed of unusual strength of body and of character.
-      </p>
-      <hr/>
-      <p>
-        His tangled beard, grizzled hair, and outstanding, drooping eyebrows combined to give an air of dignity and power to his appearance, but his face was of an ashen white, while his lips and the corners of his nostrils were tinged with a shade of blue. It was clear to me at a glance that he was in the grip of some deadly and chronic disease.
-      </p>
-    </div>
-  </div>
+    <!-- Example — done in script.js
+    <div class="project columnContainer" onclick="()=>{switchScene('teapot')}">
 
-  <div class="rowText">
-    <div class="d100">
-      <h2>
-        Inside
-      </h2>
-    </div>
-  </div>
-
-  <div class="rowMax">
-    <div class="d50 gradientBG objectContainer-50">
-      <canvas class="object-Teapot"></canvas>
-    </div>
-    <div class="d50 center grayBG">
-
-      <div class="objectDesc">
-        <h3>
-          Exploration #2 — The Teapot
-        </h3>
-        <p>
-          The man who entered was a strange and impressive figure. His slow, limping step and bowed shoulders gave the appearance of decrepitude, and yet his hard, deep-lined, craggy features, and his enormous limbs showed that he was possessed of unusual strength of body and of character.
-        </p>
+      <div class="project_num">
+        Exploration #2
+      </div>
+      <div class="project_title">
+        The Teapot
+      </div>
+      <div class="project_text">
+        On April 5, unless you have priority registration status (e.g. you petitioned to graduate at the end of the summer). You will receive an email from academic advising with more details, so please check your email as we approach the date.
       </div>
 
     </div>
-  </div>
+    -->
 
-  <div class="rowText">
-    <div class="d100">
-      <h3>
-        Introduction
-      </h3>
-      <p>
-        The man who entered was a strange and impressive figure. His slow, limping step and bowed shoulders gave the appearance of decrepitude, and yet his hard, deep-lined, craggy features, and his enormous limbs showed that he was possessed of unusual strength of body and of character.
-      </p>
-      <p>
-        The man who entered was a strange and impressive figure. His slow, limping step and bowed shoulders gave the appearance of decrepitude, and yet his hard, deep-lined, craggy features, and his enormous limbs showed that he was possessed of unusual strength of body and of character.
-      </p>
-    </div>
-  </div>
-
-  <div class="rowMax colorBG">
-    <canvas class="object-wall"></canvas>
-  </div>
-
-  <div class="rowText">
-    <div class="d100">
-      <h3>
-        Exploration #3 — The Multigravity
-      </h3>
-      <p>
-        The man who entered was a strange and impressive figure. His slow, limping step and bowed shoulders gave the appearance of decrepitude, and yet his hard, deep-lined, craggy features, and his enormous limbs showed that he was possessed of unusual strength of body and of character.
-      </p>
-      <p>
-        The man who entered was a strange and impressive figure. His slow, limping step and bowed shoulders gave the appearance of decrepitude, and yet his hard, deep-lined, craggy features, and his enormous limbs showed that he was possessed of unusual strength of body and of character.
-      </p>
-    </div>
   </div>
 
   <footer>
-    <div class="row">
-      <div class="d100">
+    <div class="columnContainer">
+      <div class="empty"></div>
+      <div class="empty"></div>
+      <div>
         <a href="https://olivierbrueckner.de/">Olivier Brückner</a> &copy; 2021 — <a href="https://github.com/olivierbrcknr/mfadt-designed-realities">View on GitHub</a>
       </div>
     </div>
   </footer>
 
 </div>
+
 
 </body>
 </html>
