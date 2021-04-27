@@ -20,7 +20,7 @@ const init = ( actualRenderer, actualScene, actualCamera, canvas, actualGui, siz
   renderer = actualRenderer
   gui = actualGui
   folder = gui.addFolder('Wall')
-  folder.isOpen = true
+  folder.open()
   scene = actualScene
   camera = actualCamera
 
@@ -29,15 +29,6 @@ const init = ( actualRenderer, actualScene, actualCamera, canvas, actualGui, siz
   camera.position.z = 10;
   camera.lookAt( new THREE.Vector3( 0,2,0 ) )
 
-
-  folder.add(camera.position, 'y', 0, 10, 0.01).name("Cam Y")
-  folder.add(camera.position, 'z', 1, 100, 0.01).name("Cam Z")
-  folder.add(camera, 'fov', 1, 100, 0.01).name("FOV").onChange(()=>{
-    camera.updateProjectionMatrix();
-  })
-  folder.add(camera, 'zoom', 0.01, 10, 0.01).name("Zoom").onChange(()=>{
-    camera.updateProjectionMatrix();
-  })
 
   objL.load(
     "/objects/wall.obj",

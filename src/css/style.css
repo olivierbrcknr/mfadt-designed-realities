@@ -30,7 +30,7 @@ hr {
   max-width: 1200px;
   margin: 0 auto;
   border: none;
-  border-top: solid 1px #ccc;
+  border-top: solid 1px var(--color-gray);
 }
 
 .dg.ac {
@@ -48,9 +48,9 @@ header {
   padding: 0 20px;
   transition: height 1s;
 }
-.isProject header {
+/* .isProject header {
   height: calc( 100vh + 100px - 200px );
-}
+} */
 
 header .columnContainer {
   margin: 10px auto;
@@ -142,7 +142,7 @@ footer {
 }
 .project.notReadyYet {
   cursor: default;
-  color: #ccc !important;
+  color: var(--color-gray) !important;
 }
 
 .project_num,

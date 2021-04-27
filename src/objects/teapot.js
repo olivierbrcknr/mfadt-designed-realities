@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-
 import { material_porcelain } from './materials.js'
 
 
@@ -23,7 +22,7 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, sizes, ob
   renderer = actualRenderer
   gui = actualGui
   folder = gui.addFolder('TeaPot')
-  folder.isOpen = true
+  folder.open()
   scene = actualScene
 
   camera.position.y = 40;
@@ -32,6 +31,7 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, sizes, ob
   controls = new OrbitControls(camera, canvas)
   controls.enableDamping = true
   controls.enableZoom = false
+  controls.autoRotate = true
 
   objL.load(
     "/objects/TeaPot.obj",
@@ -59,11 +59,7 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, sizes, ob
 
 const tick = ( elapsedTime ) =>
 {
-  // Teapot
-  if( object_teapot ){
-    object_teapot.rotation.y = 0.15 * elapsedTime
-    controls.update()
-  }
+  controls.update()
 }
 
 // Remove

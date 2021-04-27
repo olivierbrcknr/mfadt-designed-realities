@@ -15,6 +15,7 @@ import teapotScene from './objects/teapot.js'
 import introScene from './objects/introScene'
 import wallScene from './objects/wallScene'
 import roomScene from './objects/roomScene'
+import museumScene from './objects/museumScene'
 
 // html 
 const canvas = document.querySelector('#threeCanvas')
@@ -68,8 +69,11 @@ for( const info of objectData ){
 }
 
 // Variables ————————————————————————————————————————————————————————
-const gui = new dat.GUI()
+const gui = new dat.GUI({
+  width: 400
+})
 const sceneFolder = gui.addFolder('Scenes')
+const cameraFolder = gui.addFolder('Camera')
 const debugObject = {}
 
 const isDev = (process.env.NODE_ENV === 'development')
@@ -101,6 +105,16 @@ renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 scene.add(camera)
+
+cameraFolder.add( camera.position, 'x', -10, 20, 0.01 ).name('Position X')
+cameraFolder.add( camera.position, 'y', -10, 20, 0.01 ).name('Position Y')
+cameraFolder.add( camera.position, 'z', -10, 20, 0.01 ).name('Position Z')
+cameraFolder.add( camera, 'fov', 10, 100, 0.01 ).name('FoV').onChange(()=>{
+  camera.updateProjectionMatrix()
+})
+cameraFolder.add(camera, 'zoom', 0.01, 10, 0.01).name("Zoom").onChange(()=>{
+  camera.updateProjectionMatrix();
+})
 
 const axesHelper = new THREE.AxesHelper(3)
 axesHelper.visible = isDev
@@ -170,6 +184,13 @@ debugObject.initRoomScene = () => {
 }
 sceneFolder.add(debugObject,"initRoomScene").name('Start Room Scene')
 
+debugObject.initMuseumScene = () => {
+  debugObject.resetScene()
+  currentScene = museumScene;
+  currentScene.init(renderer, scene, camera, canvas, gui, gltfLoader);
+}
+sceneFolder.add(debugObject,"initMuseumScene").name('Start Museum Scene')
+
 
 const switchScene = (name) => {
 
@@ -190,6 +211,9 @@ const switchScene = (name) => {
       break;
     case 'room':
       debugObject.initRoomScene()
+      break;
+    case 'museum':
+      debugObject.initMuseumScene()
       break;
     default:
       isAvailable = false

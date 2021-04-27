@@ -124,7 +124,7 @@ const createBox = ( width, height, depth, position, mass, optName, hasObj = null
 
 const sphereGeometry = new THREE.SphereGeometry( 1, 20, 20 )
 
-const createSphere = (radius, position, optName, hasObj = null, mat = null, totalMultiplier = 1) => {
+const createSphere = (radius, position, optName, hasObj = null, mat = null, totalMultiplier = 1, isCompass = false) => {
 
     let randomPosition = {
         x: position.x + ( Math.random()-0.5 ) * 2,
@@ -136,6 +136,8 @@ const createSphere = (radius, position, optName, hasObj = null, mat = null, tota
     multiplier = totalMultiplier ? (multiplier * totalMultiplier) : multiplier
 
     let objectMesh = null
+
+    let additionalObject = {}
 
     if( hasObj ){
 
@@ -152,6 +154,15 @@ const createSphere = (radius, position, optName, hasObj = null, mat = null, tota
                 }
 
                 child.castShadow = true
+            }
+            if( isCompass ){
+                if( child.name === 'RING' ){
+                    
+                }
+                if( child.name === 'NEEDLE' ){
+                    console.log(child)
+                    additionalObject.needle = child
+                }
             }
         });
 
@@ -186,7 +197,8 @@ const createSphere = (radius, position, optName, hasObj = null, mat = null, tota
     objectsToUpdate.push({
         body,
         mesh,
-        objectMesh
+        objectMesh,
+        ...additionalObject
     })
 }
 
@@ -397,7 +409,9 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
                 {x:0,y:3,z:0},
                 'compass', 
                 gltf.scene, 
-                false, 1)
+                false,
+                1,
+                true)
         }
     )
 
@@ -410,7 +424,7 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
                 2.6,1.4,2.55,
                 {x:-2,y:4,z:2},
                 1,
-                'entrance', 
+                'museum', 
                 gltf.scene, 
                 material_vinylRed, 
                 0.5
@@ -454,6 +468,14 @@ const tick = ( elapsedTime ) =>
         if( object.objectMesh ){
             object.objectMesh.position.copy( object.body.position )
             object.objectMesh.quaternion.copy( object.body.quaternion )
+
+            // if( object.needle ){
+            //     console.log( object.body.quaternion )
+            //     object.objectMesh.quaternion.w = - object.body.quaternion.w
+            //     object.objectMesh.quaternion.x = 0
+            //     object.objectMesh.quaternion.y = 0
+            //     object.objectMesh.quaternion.z = 0
+            // }
         }
 
         objectsToTest.push( object.mesh )
