@@ -19,6 +19,7 @@ import roomScene from './objects/roomScene'
 // html 
 const canvas = document.querySelector('#threeCanvas')
 const header = document.querySelector('#header .title')
+const pageTitleDOM = header.querySelector('h1')
 const titleDOM = header.querySelector(".objectTitle")
 const projectList = document.querySelector('#projectList')
 const projectDesc = document.querySelector('#projectInfo')
@@ -121,8 +122,6 @@ const raycaster = new THREE.Raycaster()
 
 let currentScene = introScene;
 
-console.log( sizes )
-
 
 // delete
 debugObject.resetScene = () => {
@@ -207,14 +206,13 @@ const switchScene = (name) => {
       infoHeight = 0
       document.querySelector('#wrapper').classList.remove('isProject')
     }else{
-      titleDOM.innerHTML = "— "+currentSceneName
+      const currInfo = objectData.find( i => i.slug === currentSceneName )
+
+      titleDOM.innerHTML = currInfo["name"]
       infoHeight = 200
       document.querySelector('#wrapper').classList.add('isProject')
-
       projectDesc.innerHTML = ""
-      const currInfo = objectData.find( i => i.slug === currentSceneName )
       createProjectInfoRow( projectDesc , currInfo )
-
     }
 
     updateRenderSizes()
@@ -223,7 +221,7 @@ const switchScene = (name) => {
 }
 
 
-header.addEventListener('click',()=>{
+pageTitleDOM.addEventListener('click',()=>{
   if( !isIntro ){
     switchScene('intro')
   }

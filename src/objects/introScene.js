@@ -45,7 +45,7 @@ world.defaultContactMaterial = defaultContactMaterial
 // box
 const boxGeometry = new THREE.BoxGeometry( 1, 1, 1 )
 
-const createBox = ( width, height, depth, position, optName, hasObj = null, mat = null, totalMultiplier) => {
+const createBox = ( width, height, depth, position, mass, optName, hasObj = null, mat = null, totalMultiplier) => {
 
     let randomPosition = {
         x: position.x + ( Math.random()-0.5 ) * 2,
@@ -99,7 +99,7 @@ const createBox = ( width, height, depth, position, optName, hasObj = null, mat 
     // CANNON body
     const shape = new CANNON.Box( new CANNON.Vec3( (width*multiplier)/2, (height*multiplier)/2, (depth*multiplier)/2 ) )
     const body = new CANNON.Body({
-        mass: 1,
+        mass: mass,
         position: new CANNON.Vec3(0,3,0),
         shape,
         material: defaultMaterial
@@ -274,9 +274,11 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
     createWall( {x:0,y:0,z:-6}, 0, 0, 1, Math.PI * 0.5 , true) // z neg
     // createWall( {x:0,y:0,z: 8}, 0, 0, -1, -Math.PI * 0.5 , false) // z pos
     createWall( {x:-6,y:0,z:0}, 0, 1, 0, Math.PI/ 2 , true) // x neg
-    createWall( {x:6,y:0,z:0}, 0, -1, 0, Math.PI/ 2 , false) // x pos
+    // createWall( {x:5,y:0,z:0}, 0, -1, 0, Math.PI/ 2 , false) // x pos
     createWall( {x:0,y:0,z:0}, -1, 0, 0, Math.PI/ 2 , true) // y neg (floor)
     createWall( {x:0,y:5,z:0}, 1, 0, 0, Math.PI/ 2 , false) // y pos
+
+    createWall( {x:3,y:0,z:3}, 0, -1, 0, Math.PI* 3/4 , false) // FRONT
     
     camera.lookAt(new THREE.Vector3(0,0,0))
 
@@ -321,7 +323,15 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
         '/objects/plant.gltf',
         (gltf) =>
         {
-            createBox(0.2,0.2,0.2,{x:2,y:3,z:0},'room', gltf.scene, false, 3)
+            createBox(
+                0.2,0.2,0.2,
+                {x:2,y:3,z:0},
+                1.7,
+                'room', 
+                gltf.scene, 
+                false, 
+                3
+            )
         }
     )
 
@@ -333,6 +343,7 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
             createBox(
                 1,1,1,
                 {x:1,y:3,z:2},
+                1.4,
                 'teapot', 
                 gltf.scene, 
                 material_porcelain_Beige, 
@@ -349,6 +360,7 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
             createBox(
                 0.43,2.73,0.48,
                 {x:-2,y:3,z:-4},
+                2,
                 'chair', 
                 gltf.scene, 
                 false,
@@ -366,6 +378,7 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
             createBox(
                 0.98,0.36,0.62,
                 {x:-2,y:3,z:-4},
+                0.7,
                 'wall', 
                 gltf.scene, 
                 material_vinylRed,
@@ -396,6 +409,7 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
             createBox(
                 2.6,1.4,2.55,
                 {x:-2,y:4,z:2},
+                1,
                 'entrance', 
                 gltf.scene, 
                 material_vinylRed, 
@@ -496,14 +510,14 @@ const gravClick = (e) => {
     if( e.target.classList.contains('down') ){
         world.gravity.set( 0, -9.82, 0 )
     }
-    if( e.target.classList.contains('left') ){
+    if( e.target.classList.contains('right') ){
         world.gravity.set( 0, 0, -9.82 )
     }
-    if( e.target.classList.contains('right') ){
+    if( e.target.classList.contains('left') ){
         world.gravity.set( -9.82, 0, 0 )
     }
     if( e.target.classList.contains('front') ){
-        world.gravity.set( 9.82, 0, 0 )
+        world.gravity.set( 5, 0, 5 )
     }
 
 }

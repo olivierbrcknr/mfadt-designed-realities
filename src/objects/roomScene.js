@@ -22,8 +22,8 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, gltfL ) =
 
   scene.background = new THREE.Color('#CCC3B6');
 
-  camera.position.y = 2;
-  camera.position.z = 2;
+  camera.position.y = 4;
+  camera.position.z = 4;
 
   controls = new OrbitControls(camera, canvas)
   controls.enableDamping = true

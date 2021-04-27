@@ -2,3 +2,6 @@
 BU/*
 node_modules/*
 dist/
+src/css/style_old.css
+src/index_old.html
+src/script_old.js
