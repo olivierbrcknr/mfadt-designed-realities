@@ -177,6 +177,11 @@ const createSphere = (radius, position, optName, hasObj = null, mat = null, tota
         sphereGeometry,
         ( !hasObj && !mat ) ? material_vinylBrown : material_transparent
     )
+
+    if( optName ){
+        mesh.name = optName
+    }
+
     mesh.scale.set( radius*multiplier, radius*multiplier, radius*multiplier )
     mesh.castShadow = true
     mesh.position.copy( randomPosition )
@@ -258,7 +263,7 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
     gui = actualGui
     canvas = actualCanvas
     folder = gui.addFolder('IntroScene')
-    folder.isOpen = true
+    folder.open()
     scene = actualScene
     raycaster = actualRayCaster
     camera = actualCamera
@@ -277,11 +282,6 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
     camera.position.z = 5
 
     world.gravity.set( 0, -9.82, 0 )
-
-    folder.add( camera, 'zoom', 0, 10, 0.1).onChange(()=>{
-        camera.updateProjectionMatrix()
-    })
-    folder.add( camera.position, 'z', 0, 30, 0.01).onChange()
 
     createWall( {x:0,y:0,z:-6}, 0, 0, 1, Math.PI * 0.5 , true) // z neg
     // createWall( {x:0,y:0,z: 8}, 0, 0, -1, -Math.PI * 0.5 , false) // z pos
@@ -407,7 +407,7 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
             createSphere(
                 0.8,
                 {x:0,y:3,z:0},
-                'compass', 
+                'entrance', 
                 gltf.scene, 
                 false,
                 1,

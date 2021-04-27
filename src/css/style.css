@@ -76,6 +76,10 @@ header .title h1 {
   letter-spacing: -0.1em;
   margin: 0 0.3em;
 }
+.isDark #header{
+  color: var(--color-gray);
+}
+
 footer {
   font-family: var(--font-family-regular);
   font-size: 14px;

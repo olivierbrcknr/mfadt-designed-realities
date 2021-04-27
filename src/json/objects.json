@@ -9,13 +9,15 @@
         "name": "The Museum",
         "slug": "museum",
         "desc": "…",
-        "active": false
+        "active": true,
+        "isDark": true
     },
     {
         "name": "The Teapot",
         "slug": "teapot",
         "desc": "Sarah brought cake. Neither could I see her nor did I know if she actually existed, but still, I appreciated the gesture.",
-        "active": true
+        "active": true,
+        "isDark": true
     },
     {
         "name": "The Furniture",

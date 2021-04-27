@@ -194,7 +194,6 @@ sceneFolder.add(debugObject,"initMuseumScene").name('Start Museum Scene')
 
 const switchScene = (name) => {
 
-  console.log('switching to',name)
   let isAvailable = true
 
   isIntro = false
@@ -217,13 +216,19 @@ const switchScene = (name) => {
       break;
     default:
       isAvailable = false
-      console.log('sorry, does not exist yet',name)
       break;
+  }
+  
+  if( isAvailable ){
+    console.log('%cswitching to '+name,'color: #57E28E;')
+  }else{
+    console.log('%csorry, '+name+' does not exist yet','color: #E46240;')
   }
 
   if( currentSceneName !== name && isAvailable ){
 
     currentSceneName = name
+    document.querySelector('#wrapper').classList.remove('isDark')
 
     if( isIntro ){
       titleDOM.innerHTML = ""
@@ -235,6 +240,9 @@ const switchScene = (name) => {
       titleDOM.innerHTML = currInfo["name"]
       infoHeight = 200
       document.querySelector('#wrapper').classList.add('isProject')
+      if( currInfo.isDark ){
+        document.querySelector('#wrapper').classList.add('isDark')
+      }
       projectDesc.innerHTML = ""
       createProjectInfoRow( projectDesc , currInfo )
     }

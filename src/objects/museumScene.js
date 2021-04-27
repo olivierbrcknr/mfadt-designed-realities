@@ -52,10 +52,10 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, gltfL ) =
   );
 
   // Lights
-  const ambientLight = new THREE.AmbientLight(0xFFFFFF, 1)
-  folder.add(ambientLight, 'intensity').min(0).max(1).step(0.01).name("A intesnity ")
-  scene.add(ambientLight)
-  objectsStatic.push( ambientLight )
+  // const ambientLight = new THREE.AmbientLight(0xFFFFFF, 1)
+  // folder.add(ambientLight, 'intensity').min(0).max(100).step(0.01).name("A intesnity ")
+  // scene.add(ambientLight)
+  // objectsStatic.push( ambientLight )
 
   renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
