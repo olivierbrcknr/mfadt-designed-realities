@@ -155,15 +155,15 @@ const createSphere = (radius, position, optName, hasObj = null, mat = null, tota
 
                 child.castShadow = true
             }
-            if( isCompass ){
-                if( child.name === 'RING' ){
+            // if( isCompass ){
+            //     if( child.name === 'RING' ){
                     
-                }
-                if( child.name === 'NEEDLE' ){
-                    console.log(child)
-                    additionalObject.needle = child
-                }
-            }
+            //     }
+            //     if( child.name === 'NEEDLE' ){
+            //         console.log(child)
+            //         additionalObject.needle = child
+            //     }
+            // }
         });
 
         objectMesh.scale.set( totalMultiplier, totalMultiplier, totalMultiplier )
@@ -272,6 +272,12 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
     gravitySelector = document.querySelector('#gravitySelector')
     gravitySelector.addEventListener('click',gravClick)
     gravitySelector.classList.remove('isHidden')
+
+    const currentSel = gravitySelector.querySelector('.isActive')
+    if( currentSel ){
+        currentSel.classList.remove('isActive')
+    }
+    gravitySelector.querySelector('.down').classList.add('isActive')
 
     // Update existing objects
     renderer.shadowMap.enabled = true
@@ -526,20 +532,38 @@ const checkIfClick = () => {
 }
 
 const gravClick = (e) => {
+
+    let hasNewGravDir = false
+    const currentEl = gravitySelector.querySelector('.isActive')
+
     if( e.target.classList.contains('up') ){
         world.gravity.set( 0, 9.82, 0 )
+        e.target.classList.add( 'isActive' )
+        hasNewGravDir = true
     }
     if( e.target.classList.contains('down') ){
         world.gravity.set( 0, -9.82, 0 )
+        e.target.classList.add( 'isActive' )
+        hasNewGravDir = true
     }
     if( e.target.classList.contains('right') ){
         world.gravity.set( 0, 0, -9.82 )
+        e.target.classList.add( 'isActive' )
+        hasNewGravDir = true
     }
     if( e.target.classList.contains('left') ){
         world.gravity.set( -9.82, 0, 0 )
+        e.target.classList.add( 'isActive' )
+        hasNewGravDir = true
     }
     if( e.target.classList.contains('front') ){
         world.gravity.set( 5, 0, 5 )
+        e.target.classList.add( 'isActive' )
+        hasNewGravDir = true
+    }
+
+    if( hasNewGravDir ){
+        currentEl.classList.remove( 'isActive' )
     }
 
 }

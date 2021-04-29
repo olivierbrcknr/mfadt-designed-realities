@@ -100,16 +100,6 @@ footer {
   cursor: pointer;
 }
 
-#gravitySelector {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  z-index: 2;
-}
-#gravitySelector.isHidden {
-  display: none !important;
-}
-
 .isProject #projectInfo {
   height: 200px;
   opacity: 1;
@@ -159,6 +149,57 @@ footer {
 #projectDescription {
   padding: 50px 20px;
 }
+
+/* GRAVITY SELECTOR ——————————————————————————————— */
+#gravitySelector {
+  position: absolute;
+  bottom: 100px;
+  right: 100px;
+  z-index: 2;
+  transform-style: preserve-3d;
+  transform: rotateZ(29deg) rotateY(35deg) rotateX(-49deg);
+}
+#gravitySelector.isHidden {
+  display: none !important;
+}
+.gravitySelectorArea {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  transform-style: preserve-3d;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  font-family: var(--font-family-regular);
+  background: var(--color-gray);
+  cursor: pointer;
+}
+.gravitySelectorArea:hover {
+  background: #b4a8a5;
+}
+.gravitySelectorArea.isActive {
+  background: var(--color-primary);
+}
+.gravitySelectorArea.up {
+  transform: translateZ( -60px ) rotateZ(-90deg);
+} 
+.gravitySelectorArea.down {
+  transform: translateX(5%) translateY(5%) translateZ( 0px ) rotateZ(-90deg);
+} 
+.gravitySelectorArea.right {
+  transform: translateX(-50%) translateY(-110%) rotateX(90deg) rotateY(0deg);
+}
+.gravitySelectorArea.left {
+  transform: translateX(-110%) translateY(-50%) rotateX(90deg) rotateY(-90deg);
+}
+
+.gravitySelectorArea.front {
+  transform: translateZ( 40px ) translateX(-25%)  rotateX(90deg) rotateY(-45deg);
+  height: 30px;
+  width: 70px;
+} 
+
 
 
 @media screen and (max-width: 720px) {
