@@ -8,6 +8,7 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 import * as dat from 'dat.gui'
+import Stats from 'stats.js'
 
 import objectData from './json/objects.json'
 
@@ -28,15 +29,19 @@ const projectDesc = document.querySelector('#projectInfo')
 let isIntro = true
 let currentSceneName = 'intro'
 
-const createProjectInfoRow = ( container, info ) => {
+const createProjectInfoRow = ( container, info, isOnlyInfo = false ) => {
 
   const listItem = document.createElement("div")
-  listItem.classList.add("project")
   listItem.classList.add("columnContainer")
-  listItem.addEventListener("click",()=>{
-    switchScene( info.slug )
-    window.scrollTo({top: 0, behavior: 'smooth'});
-  })
+  if( isOnlyInfo ){
+
+  }else{
+    listItem.classList.add("project")
+    listItem.addEventListener("click",()=>{
+      switchScene( info.slug )
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    })
+  }
   if( info.active === false ){
     listItem.classList.add("notReadyYet")
   }
@@ -68,7 +73,7 @@ for( const info of objectData ){
   dataIndex++
 }
 
-// Variables ————————————————————————————————————————————————————————
+// Debug ————————————————————————————————————————————————————————
 const gui = new dat.GUI({
   width: 400
 })
@@ -81,6 +86,26 @@ const isDev = (process.env.NODE_ENV === 'development')
 if( !isDev ){
   gui.hide()
 }
+
+let showStats = true
+const stats = new Stats()
+stats.showPanel(0) // fps panel
+document.body.appendChild( stats.dom )
+
+if(!isDev){
+  stats.dom.style.display = 'none'
+  showStats = false
+}
+
+debugObject.toggleFPS = () => {
+  if( showStats ){
+    stats.dom.style.display = 'none'
+  }else{
+    stats.dom.style.display = 'block'
+  }
+  showStats = !showStats
+}
+gui.add(debugObject,"toggleFPS")
 
 let infoHeight = 0
 
@@ -244,7 +269,7 @@ const switchScene = (name) => {
         document.querySelector('#wrapper').classList.add('isDark')
       }
       projectDesc.innerHTML = ""
-      createProjectInfoRow( projectDesc , currInfo )
+      createProjectInfoRow( projectDesc , currInfo, true )
     }
 
     updateRenderSizes()
@@ -269,6 +294,8 @@ const clock = new THREE.Clock()
 
 const tick = () =>
 {
+  stats.begin()
+
   const elapsedTime = clock.getElapsedTime()
 
   if( currentScene ){
@@ -282,6 +309,8 @@ const tick = () =>
 
   // Call tick again on the next frame
   window.requestAnimationFrame(tick)
+
+  stats.end()
 }
 
 tick()
