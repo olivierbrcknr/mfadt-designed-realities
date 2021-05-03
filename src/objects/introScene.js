@@ -588,17 +588,25 @@ const remove = () => {
         }
         if( object.mesh ){
             scene.remove( object.mesh )
+            // object.mesh.geometry.dispose()
+            // object.mesh.material.dispose()
         }
         if( object.objectMesh ){
             scene.remove( object.objectMesh )
+            // object.objectMesh.geometry.dispose()
+            // object.objectMesh.material.dispose()
         }
     }
 
     for( const object of objectsToUpdate ){
         world.removeBody( object.body )
         scene.remove( object.mesh )
+        object.mesh.geometry.dispose()
+        object.mesh.material.dispose()
         if( object.objectMesh ){
             scene.remove( object.objectMesh )
+            // object.objectMesh.geometry.dispose()
+            // object.objectMesh.material.dispose()
         }
     }
 

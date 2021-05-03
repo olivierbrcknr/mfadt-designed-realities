@@ -15,7 +15,7 @@ const objectsStatic = []
 const objectScales = {}
 objectScales.wall = 3
 
-const init = ( actualRenderer, actualScene, actualCamera, canvas, actualGui, sizes, objL ) => {
+const init = ( actualRenderer, actualScene, actualCamera, canvas, actualGui, sizes, gltfL, txL ) => {
 
   renderer = actualRenderer
   gui = actualGui
@@ -25,81 +25,40 @@ const init = ( actualRenderer, actualScene, actualCamera, canvas, actualGui, siz
   camera = actualCamera
 
   camera.position.x = 0;
-  camera.position.y = 3;
-  camera.position.z = 10;
+  camera.position.y = 1;
+  camera.position.z = 3;
   camera.lookAt( new THREE.Vector3( 0,2,0 ) )
 
+  camera.fov = 30
 
-  objL.load(
-    "/objects/wall.obj",
-    ( object ) => {
+  const bakedTexture = txL.load('textures/wall.jpg')
+  bakedTexture.flipY = false
+  bakedTexture.encoding = THREE.sRGBEncoding
 
-      object.scale.set( objectScales.wall,objectScales.wall,objectScales.wall );
+  const bakedMaterial = new THREE.MeshBasicMaterial({ map: bakedTexture })
 
-      object.traverse( function ( child ) {
-        if ( child instanceof THREE.Mesh ) {
+  renderer.outputEncoding = THREE.sRGBEncoding
 
-          child.castShadow = true
-          child.receiveShadow = true
+  gltfL.load(
+    "/objects/wall.glb",
+    ( gltf ) => {
 
-          switch( child.material.name ){
-            case 'Highlight':
-              child.material = material_vinylRed
-              break;
-            case 'Darker':
-              child.material = material_vinylBrown
-              break;
-            default:
-              child.material = material_vinylBeige
-              break;
-          }
-          // console.log(child)
-        }
-      });
+
+      const object = gltf.scene.children.find((child) => child.name === 'baked')
+
+      // object.traverse( function ( child ) {
+      //   if ( child instanceof THREE.Mesh ) {
+      //     child.castShadow = true
+      //     child.receiveShadow = true
+      //   }
+      // });
+      object.material = bakedMaterial
+
+      objectsStatic.push(object)
 
       scene.add( object );
-      objectsStatic.push( object )
-    },
+    }
   );
-
-  // Lights
-  const wall_ambientLight = new THREE.AmbientLight(0xCCC3B6, 0.7)
-  // ambientLight.color = new THREE.Color(0xff0000)
-  // ambientLight.intensity = 0.5
-  folder.add(wall_ambientLight, 'intensity').min(0).max(1).step(0.01).name("A intesnity ")
-  scene.add(wall_ambientLight)
-  objectsStatic.push( wall_ambientLight )
-
-  const wall_directionalLight = new THREE.DirectionalLight(0xFFFFFF,0.8)
-  wall_directionalLight.position.set(5,5,6)
-
-  folder.add(wall_directionalLight, 'intensity').min(0).max(1).step(0.01).name("intesnity direction")
-  folder.add(wall_directionalLight.position, 'x').min(0).max(10).step(0.1).name('Light X')
-  folder.add(wall_directionalLight.position, 'y').min(0).max(10).step(0.1).name('Light Y')
-  folder.add(wall_directionalLight.position, 'z').min(0).max(10).step(0.1).name('Light Z')
-
-  scene.add(wall_directionalLight)
-  objectsStatic.push( wall_directionalLight )
-
-  wall_directionalLight.castShadow = true
-  wall_directionalLight.shadow.mapSize.width = 2048
-  wall_directionalLight.shadow.mapSize.height = 2048
-  wall_directionalLight.shadow.normalBias = 0.1 // round surfaces
-
-  wall_directionalLight.shadow.camera.near = 1
-  wall_directionalLight.shadow.camera.far = 17
-  wall_directionalLight.shadow.camera.left = -5
-  wall_directionalLight.shadow.camera.top = 5
-  wall_directionalLight.shadow.camera.right = 8
-  wall_directionalLight.shadow.camera.bottom = -2
-
-
-  const wall_directionalLightHelper = new THREE.CameraHelper(wall_directionalLight.shadow.camera)
-  scene.add(wall_directionalLightHelper)
-  wall_directionalLightHelper.visible = false
-  folder.add(wall_directionalLightHelper, 'visible').name('ShadowCam')
-
-  objectsStatic.push( wall_directionalLightHelper )
 
   scene.background = new THREE.Color('#CCC3B6');
 
@@ -111,10 +70,10 @@ const tick = ( elapsedTime ) =>
 {
   // Wall
   if( cursor ){
-    camera.position.x = Math.sin( cursor.x * Math.PI / 32 ) * 9
-    camera.position.z = Math.cos( cursor.x * Math.PI / 32 ) * 9
-    camera.position.y = cursor.y * 2 + 3
-    camera.lookAt( new THREE.Vector3( 0,2,0 ) )
+    camera.position.x = Math.sin( cursor.x * Math.PI / 32 ) * 4
+    camera.position.z = Math.cos( cursor.x * Math.PI / 32 ) * 4
+    camera.position.y = cursor.y/2 + 1
+    camera.lookAt( new THREE.Vector3( 0,0.75,0 ) )
   }
 }
 
@@ -124,6 +83,10 @@ const remove = () => {
   console.log('Remove WallScene')
 
   scene.background = null;
+
+  camera.fov = 45
+
+  renderer.outputEncoding = THREE.LinearEncoding
 
   for( const object of objectsStatic ){
     scene.remove( object )

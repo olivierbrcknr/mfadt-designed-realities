@@ -3,7 +3,7 @@
         "name": "The Entrance",
         "slug": "entrance",
         "desc": "…",
-        "active": false
+        "active": true
     },
     {
         "name": "The Museum",

@@ -71,6 +71,8 @@ const remove = () => {
 
   for( const object of objectsStatic ){
     scene.remove( object )
+    // object.geometry.dispose()
+    // object.material.dispose()
   }
   gui.removeFolder( folder )
 }

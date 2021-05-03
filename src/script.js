@@ -6,6 +6,7 @@ import './css/style.css'
 import * as THREE from 'three'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 
 import * as dat from 'dat.gui'
 import Stats from 'stats.js'
@@ -17,6 +18,7 @@ import introScene from './objects/introScene'
 import wallScene from './objects/wallScene'
 import roomScene from './objects/roomScene'
 import museumScene from './objects/museumScene'
+import entranceScene from './objects/entranceScene'
 
 // html 
 const canvas = document.querySelector('#threeCanvas')
@@ -117,7 +119,13 @@ const sizes = {
 // Loaders
 const textureLoader = new THREE.TextureLoader()
 const objLoader = new OBJLoader()
+
+const dracoLoader = new DRACOLoader()
+dracoLoader.setDecoderPath('draco/')
+
 const gltfLoader = new GLTFLoader()
+gltfLoader.setDRACOLoader(dracoLoader)
+
 
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 100)
@@ -198,23 +206,31 @@ sceneFolder.add(debugObject,"initTeaPotScene").name('Start Teapot Scene')
 debugObject.initWallScene = () => {
   debugObject.resetScene()
   currentScene = wallScene;
-  currentScene.init(renderer, scene, camera, canvas, gui, sizes, objLoader);
+  currentScene.init(renderer, scene, camera, canvas, gui, sizes, gltfLoader, textureLoader);
 }
 sceneFolder.add(debugObject,"initWallScene").name('Start Wall Scene')
 
 debugObject.initRoomScene = () => {
   debugObject.resetScene()
   currentScene = roomScene;
-  currentScene.init(renderer, scene, camera, canvas, gui, gltfLoader);
+  currentScene.init(renderer, scene, camera, canvas, gui, gltfLoader, textureLoader);
 }
 sceneFolder.add(debugObject,"initRoomScene").name('Start Room Scene')
 
 debugObject.initMuseumScene = () => {
   debugObject.resetScene()
   currentScene = museumScene;
-  currentScene.init(renderer, scene, camera, canvas, gui, gltfLoader);
+  currentScene.init(renderer, scene, camera, canvas, gui, gltfLoader, textureLoader);
 }
 sceneFolder.add(debugObject,"initMuseumScene").name('Start Museum Scene')
+
+debugObject.initEntranceScene = () => {
+  debugObject.resetScene()
+  currentScene = entranceScene;
+  currentScene.init(renderer, scene, camera, canvas, gui, gltfLoader, textureLoader);
+}
+sceneFolder.add(debugObject,"initEntranceScene").name('Start Entrance Scene')
+
 
 
 const switchScene = (name) => {
@@ -238,6 +254,9 @@ const switchScene = (name) => {
       break;
     case 'museum':
       debugObject.initMuseumScene()
+      break;
+    case 'entrance':
+      debugObject.initEntranceScene()
       break;
     default:
       isAvailable = false

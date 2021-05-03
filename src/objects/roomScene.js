@@ -12,7 +12,7 @@ let folder = null
 
 const objectsStatic = []
 
-const init = ( actualRenderer, actualScene, camera, canvas, actualGui, gltfL ) => {
+const init = ( actualRenderer, actualScene, camera, canvas, actualGui, gltfL, txL ) => {
 
   renderer = actualRenderer
   gui = actualGui
@@ -22,70 +22,54 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, gltfL ) =
 
   scene.background = new THREE.Color('#CCC3B6');
 
+  const bakedTexture = txL.load('textures/room.jpg')
+  bakedTexture.flipY = false
+  bakedTexture.encoding = THREE.sRGBEncoding
+
+  const bakedMaterial = new THREE.MeshBasicMaterial({ map: bakedTexture })
+
+  const windowMaterial = new THREE.MeshBasicMaterial({ color: '#FFF' })
+
+  renderer.outputEncoding = THREE.sRGBEncoding
+
   camera.position.y = 4;
-  camera.position.z = -4;
+  camera.position.z = 4;
 
   controls = new OrbitControls(camera, canvas)
   controls.enableDamping = true
   controls.enableZoom = false
 
+  controls.maxPolarAngle = Math.PI / 2 
+  controls.maxAzimuthAngle = Math.PI / 2
+  controls.minAzimuthAngle = 0
+
   gltfL.load(
-    "/objects/room.gltf",
+    "/objects/room.glb",
     ( gltf ) => {
 
       const object = gltf.scene
 
+      console.log( object )
+
       object.traverse( function ( child ) {
         if ( child instanceof THREE.Mesh ) {
-
-          child.castShadow = true
-          child.receiveShadow = true
-          child.material = material_vinylBeige
+          if( child.name === 'window' ){
+            child.material = windowMaterial
+          }
+          
+          if( child.name === 'baked' ){
+            child.material = bakedMaterial
+          }
         }
       });
 
       objectsStatic.push(object)
 
+      object.rotation.y = -Math.PI / 2
+
       scene.add( object );
     }
   );
-
-  // Lights
-  const ambientLight = new THREE.AmbientLight(0xCCC3B6, 0.7)
-  folder.add(ambientLight, 'intensity').min(0).max(1).step(0.01).name("A intesnity ")
-  scene.add(ambientLight)
-  objectsStatic.push( ambientLight )
-
-  const directionalLight = new THREE.DirectionalLight(0xFFFFFF,0.8)
-  directionalLight.position.set(4,3,-3)
-
-  folder.add(directionalLight, 'intensity').min(0).max(1).step(0.01).name("intesnity direction")
-  folder.add(directionalLight.position, 'x').min(-10).max(10).step(0.1).name('Light X')
-  folder.add(directionalLight.position, 'y').min(-10).max(10).step(0.1).name('Light Y')
-  folder.add(directionalLight.position, 'z').min(-10).max(10).step(0.1).name('Light Z')
-
-  scene.add(directionalLight)
-  objectsStatic.push( directionalLight )
-
-  directionalLight.castShadow = true
-  directionalLight.shadow.mapSize.width = 2048
-  directionalLight.shadow.mapSize.height = 2048
-  directionalLight.shadow.normalBias = 0.1 // round surfaces
-
-  directionalLight.shadow.camera.near = 1
-  directionalLight.shadow.camera.far = 17
-  directionalLight.shadow.camera.left = -5
-  directionalLight.shadow.camera.top = 5
-  directionalLight.shadow.camera.right = 8
-  directionalLight.shadow.camera.bottom = -2
-
-
-  const directionalLightHelper = new THREE.CameraHelper(directionalLight.shadow.camera)
-  scene.add(directionalLightHelper)
-  directionalLightHelper.visible = false
-  folder.add(directionalLightHelper, 'visible').name('ShadowCam')
-
-  objectsStatic.push( directionalLightHelper )
     
 }
 
@@ -104,8 +88,12 @@ const remove = () => {
   controls.dispose()
   scene.background = null;
 
+  renderer.outputEncoding = THREE.LinearEncoding
+
   for( const object of objectsStatic ){
     scene.remove( object )
+    // object.geometry.dispose()
+    // object.material.dispose()
   }
   gui.removeFolder( folder )
 }
