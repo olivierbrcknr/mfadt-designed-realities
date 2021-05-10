@@ -28,6 +28,7 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, gltfL, tx
   controls.enableDamping = true
   controls.target = new THREE.Vector3( 0.1, 1.2, 0 )
 
+  controls.enablePan = false
   controls.enableZoom = true
   controls.minDistance = 0.3
   controls.maxDistance = 2

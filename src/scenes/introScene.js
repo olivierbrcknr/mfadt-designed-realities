@@ -13,6 +13,7 @@ let camera = null
 let canvas = null
 
 let cameraIsUpsideDown = false
+let gravityIsZero = true
 
 let gravitySelector = null
 
@@ -45,7 +46,7 @@ world.defaultContactMaterial = defaultContactMaterial
 // box
 const boxGeometry = new THREE.BoxGeometry( 1, 1, 1 )
 
-const createBox = ( width, height, depth, position, mass, optName, hasObj = null, mat = null, totalMultiplier) => {
+const createBox = ( width, height, depth, position, mass, optName, hasObj = null, mat = null, totalMultiplier = 1, dir = '-y' ) => {
 
     let randomPosition = {
         x: position.x + ( Math.random()-0.5 ) * 2,
@@ -126,10 +127,36 @@ const createBox = ( width, height, depth, position, mass, optName, hasObj = null
 
     world.add( body )
 
+    let objGravity = null
+    let gravForce = 3
+
+    switch( dir ){
+      case '-x':
+        objGravity = new CANNON.Vec3( -gravForce, 0, 0 )
+        break
+      case '+x':
+        objGravity = new CANNON.Vec3( gravForce, 0, 0 )
+        break
+      case '-y':
+      default:
+        objGravity = new CANNON.Vec3( 0, -gravForce, 0 )
+        break
+      case '+y':
+        objGravity = new CANNON.Vec3( 0, gravForce, 0 )
+        break
+      case '+z':
+        objGravity = new CANNON.Vec3( 0, 0, gravForce )
+        break
+      case '-z':
+        objGravity = new CANNON.Vec3( 0, 0, -gravForce )
+        break
+    }
+
     objectsToUpdate.push({
         body,
         mesh,
-        objectMesh
+        objectMesh,
+        // gravity: objGravity
     })
 
 }
@@ -139,9 +166,9 @@ const sphereGeometry = new THREE.SphereGeometry( 1, 20, 20 )
 const createSphere = (radius, position, optName, hasObj = null, mat = null, totalMultiplier = 1, isCompass = false) => {
 
     let randomPosition = {
-        x: position.x + ( Math.random()-0.5 ) * 2,
-        y: position.y + ( Math.random()-0.5 ) * 2,
-        z: position.z + ( Math.random()-0.5 ) * 2
+      x: position.x + ( Math.random()-0.5 ) * 2,
+      y: position.y + ( Math.random()-0.5 ) * 2,
+      z: position.z + ( Math.random()-0.5 ) * 2
     }
 
     let multiplier = hasObj ? 1.1 : 1
@@ -285,7 +312,7 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
 
     gravitySelector = document.querySelector('#gravitySelector')
     gravitySelector.addEventListener('click',gravClick)
-    // gravitySelector.classList.remove('isHidden')
+    gravitySelector.classList.remove('isHidden')
 
     // const currentSel = gravitySelector.querySelector('.isActive')
     // if( currentSel ){
@@ -307,7 +334,8 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
     // camera.rotation.z = Math.PI
 
 
-    world.gravity.set( 0, 0, 0 )
+    world.gravity.set( 0, -9.81, 0 )
+    gravityIsZero = false
 
     createWall( {x:0,y:0,z:-6}, 0, 0, 1, Math.PI * 0.5 , true) // z neg
     // createWall( {x:0,y:0,z: 8}, 0, 0, -1, -Math.PI * 0.5 , false) // z pos
@@ -370,7 +398,8 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
           'room',
           gltf.scene,
           false,
-          3
+          3,
+          '+z'
         )
       }
     )
@@ -390,7 +419,8 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
               'teapot',
               obj,
               material_porcelain_Beige,
-              0.3
+              0.3,
+              '+y'
           )
         }
     )
@@ -407,7 +437,9 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
                 'chair',
                 gltf.scene,
                 false,
-                1.5)
+                1.5,
+                '-x'
+              )
         }
     )
     // createBox(1,4,1,{x:-2,y:3,z:-4},'chair')
@@ -425,7 +457,9 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
                 'wall',
                 gltf.scene,
                 material_vinylRed,
-                1.5)
+                1.5,
+                '-z'
+              )
         }
     )
 
@@ -441,7 +475,8 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
           'objects',
           gltf.scene,
           material_metall,
-          1.5
+          1.5,
+          '-y'
         )
       }
   )
@@ -475,7 +510,8 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
                 'museum',
                 gltf.scene,
                 material_glossyRed,
-                0.5
+                0.5,
+                '+x'
             )
         }
     )
@@ -484,7 +520,15 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
     canvas.addEventListener('click', checkIfClick)
 
     generateImpulse()
-    setTimeout( ()=>{generateImpulse(centerPoint)}, 2000 )
+    setTimeout( ()=>{
+      const currentSel = gravitySelector.querySelector('.isActive')
+      if( currentSel ){
+          currentSel.classList.remove('isActive')
+      }
+      world.gravity.set( 0, 0, 0 )
+      gravityIsZero = true
+      generateImpulse()
+    }, 2000 )
 }
 
 // Animations ————————————————————————————————————————————————————————
@@ -498,6 +542,12 @@ const tick = ( elapsedTime ) =>
     oldElapsedTime = elapsedTime
 
     const objectsToTest = []
+
+    for( const object of objectsToUpdate ){
+      if( object.gravity ){
+        object.body.applyForce( object.gravity , object.body.position )
+      }
+    }
 
     world.step(1/fps, deltaTime, 3)
 
@@ -565,10 +615,18 @@ const generateImpulse = ( toVector ) => {
       targetVector = new THREE.Vector3()
       targetVector.subVectors( toVector , object.body.position)
     }else{
-      const impX = (Math.random()-0.5) * 5
-      const impY = (Math.random()-0.5) * 5
-      const impZ = (Math.random()-0.5) * 5
-      targetVector = new CANNON.Vec3(impX, impY, impZ)
+
+      if( gravityIsZero ){
+        const impX = (Math.random()-0.5) * 5
+        const impY = (Math.random()-0.5) * 5
+        const impZ = (Math.random()-0.5) * 5
+        targetVector = new CANNON.Vec3(impX, impY, impZ)
+      }else{
+        const newX = world.gravity.x * -1
+        const newY = world.gravity.y * -1
+        const newZ = world.gravity.z * -1
+        targetVector = new CANNON.Vec3(newX, newY, newZ)
+      }
     }
 
     object.body.applyImpulse( targetVector, object.body.position )
@@ -579,7 +637,7 @@ const checkIfClick = () => {
   if( currentIntersect ){
     callback(currentIntersect.object.name)
   }else{
-    generateImpulse()
+    generateImpulse( )
   }
 }
 
@@ -625,11 +683,12 @@ const gravClick = (e) => {
     currentEl.classList.remove( 'isActive' )
   }
 
-  console.log( world.gravity )
   if( world.gravity.x === 0 && world.gravity.y === 0 && world.gravity.z === 0 ){
     toggle.innerHTML = 'off'
+    gravityIsZero = true
   }else{
     toggle.innerHTML = 'on'
+    gravityIsZero = false
   }
 
   if( e.target.classList.contains('center') ){

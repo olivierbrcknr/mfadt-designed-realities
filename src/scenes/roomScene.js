@@ -34,7 +34,11 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, gltfL, tx
 
   controls = new OrbitControls(camera, canvas)
   controls.enableDamping = true
-  controls.enableZoom = false
+  controls.enableZoom = true
+  controls.enablePan = false
+
+  controls.minDistance = 5
+  controls.maxDistance = 10
 
   controls.maxPolarAngle = Math.PI / 2
   controls.maxAzimuthAngle = Math.PI / 2

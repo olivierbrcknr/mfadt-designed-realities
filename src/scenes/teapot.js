@@ -12,11 +12,6 @@ let folder = null
 
 const objectsStatic = []
 
-const objectScales = {
-  teapot: 1,
-  wall: 20
-}
-
 const init = ( actualRenderer, actualScene, camera, canvas, actualGui, sizes, gltfL ) => {
 
   renderer = actualRenderer
@@ -25,8 +20,8 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, sizes, gl
   folder.open()
   scene = actualScene
 
-  camera.position.y = 3;
-  camera.position.z = 3;
+  camera.position.y = 4;
+  camera.position.z = 4;
 
   controls = new OrbitControls(camera, canvas)
   controls.enableDamping = true
@@ -40,9 +35,6 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, sizes, gl
       console.log( gltf )
 
       object_teapot = gltf.scene.children.find( o => o.name === "TeaPot" )
-
-      object_teapot.scale.set( objectScales.teapot,objectScales.teapot,objectScales.teapot );
-
       object_teapot.material = material_porcelain
 
       objectsStatic.push( object_teapot )
