@@ -2,7 +2,6 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 let renderer = null;
-let object_teapot = null;
 let controls = null;
 let scene = null
 let gui = null
@@ -105,4 +104,3 @@ const roomScene = {
 }
 
 export default roomScene
-

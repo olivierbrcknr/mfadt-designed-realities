@@ -85,4 +85,3 @@ const teapotScene = {
 }
 
 export default teapotScene
-

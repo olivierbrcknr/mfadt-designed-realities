@@ -1,8 +1,6 @@
-import { Material } from 'cannon';
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { material_metall, material_glass_wLight } from './../ownModules/materials'
-
 
 let renderer = null;
 let controls = null;
@@ -78,10 +76,7 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, gltfL, tx
   directionalLight.position.z = -3
 
   scene.add(directionalLight)
-  objectsStatic.push({
-    body: null,
-    mesh: directionalLight
-  })
+  objectsStatic.push(directionalLight)
 
 }
 

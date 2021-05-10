@@ -153,14 +153,22 @@ footer {
 /* GRAVITY SELECTOR ——————————————————————————————— */
 #gravitySelector {
   position: absolute;
-  bottom: 100px;
-  right: 100px;
-  z-index: 2;
-  transform-style: preserve-3d;
-  transform: rotateZ(29deg) rotateY(35deg) rotateX(-49deg);
+  bottom: 80px;
+  right: 80px;
+  /* background-color: #00f; */
+  height: 110px;
+  width: 200px;
 }
 #gravitySelector.isHidden {
   display: none !important;
+}
+#gravitySelector .direction {
+  position: absolute;
+  right: 40px;
+  top: 50px;
+  z-index: 2;
+  transform-style: preserve-3d;
+  transform: rotateZ(29deg) rotateY(35deg) rotateX(-49deg);
 }
 .gravitySelectorArea {
   width: 50px;
@@ -183,23 +191,38 @@ footer {
 }
 .gravitySelectorArea.up {
   transform: translateZ( -60px ) rotateZ(-90deg);
-} 
+}
 .gravitySelectorArea.down {
   transform: translateX(5%) translateY(5%) translateZ( 0px ) rotateZ(-90deg);
-} 
+}
 .gravitySelectorArea.right {
   transform: translateX(-50%) translateY(-110%) rotateX(90deg) rotateY(0deg);
 }
 .gravitySelectorArea.left {
   transform: translateX(-110%) translateY(-50%) rotateX(90deg) rotateY(-90deg);
 }
-
 .gravitySelectorArea.front {
   transform: translateZ( 40px ) translateX(-25%)  rotateX(90deg) rotateY(-45deg);
   height: 30px;
   width: 70px;
-} 
-
+}
+#gravitySelector .toggle {
+  position: absolute;
+  right: 100px;
+  bottom: 0px;
+}
+#gravitySelector .center {
+  position: absolute;
+  right: 100px;
+  top: 0px;
+  cursor: pointer;
+}
+#gravitySelector .upsidedown {
+  position: absolute;
+  right: 100px;
+  top: 38px;
+  cursor: pointer;
+}
 
 
 @media screen and (max-width: 720px) {

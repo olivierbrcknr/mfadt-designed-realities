@@ -4,8 +4,6 @@ import CANNON from 'cannon'
 import { material_vinylBeige, material_vinylBrown, material_vinylRed, material_porcelain_Beige, material_transparent, material_glossyRed, material_hover, material_metall } from './../ownModules/materials'
 
 let renderer = null
-let object_teapot = null
-let controls = null
 let scene = null
 let gui = null
 let folder = null
@@ -14,7 +12,11 @@ let cursor = null
 let camera = null
 let canvas = null
 
+let cameraIsUpsideDown = false
+
 let gravitySelector = null
+
+const centerPoint = new THREE.Vector3(0,0,0)
 
 let callback = () => {}
 
@@ -25,8 +27,7 @@ let objectsToUpdate = [] // pyhsics
 // set physics world
 const world = new CANNON.World()
 world.broadphase = new CANNON.SAPBroadphase( world )
-// world.allowSleep = true
-world.gravity.set( 0, -9.82, 0 )
+world.gravity.set( 0, 0, 0 )
 
 const defaultMaterial = new CANNON.Material('default')
 const defaultContactMaterial = new CANNON.ContactMaterial(
@@ -284,13 +285,13 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
 
     gravitySelector = document.querySelector('#gravitySelector')
     gravitySelector.addEventListener('click',gravClick)
-    gravitySelector.classList.remove('isHidden')
+    // gravitySelector.classList.remove('isHidden')
 
-    const currentSel = gravitySelector.querySelector('.isActive')
-    if( currentSel ){
-        currentSel.classList.remove('isActive')
-    }
-    gravitySelector.querySelector('.down').classList.add('isActive')
+    // const currentSel = gravitySelector.querySelector('.isActive')
+    // if( currentSel ){
+    //     currentSel.classList.remove('isActive')
+    // }
+    // gravitySelector.querySelector('.down').classList.add('isActive')
 
     // Update existing objects
     renderer.shadowMap.enabled = true
@@ -306,14 +307,14 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
     // camera.rotation.z = Math.PI
 
 
-    world.gravity.set( 0, -9.82, 0 )
+    world.gravity.set( 0, 0, 0 )
 
     createWall( {x:0,y:0,z:-6}, 0, 0, 1, Math.PI * 0.5 , true) // z neg
     // createWall( {x:0,y:0,z: 8}, 0, 0, -1, -Math.PI * 0.5 , false) // z pos
     createWall( {x:-6,y:0,z:0}, 0, 1, 0, Math.PI/ 2 , true) // x neg
     // createWall( {x:5,y:0,z:0}, 0, -1, 0, Math.PI/ 2 , false) // x pos
     createWall( {x:0,y:0,z:0}, -1, 0, 0, Math.PI/ 2 , true) // y neg (floor)
-    createWall( {x:0,y:5,z:0}, 1, 0, 0, Math.PI/ 2 , false) // y pos
+    createWall( {x:0,y:4,z:0}, 1, 0, 0, Math.PI/ 2 , false) // y pos ( ceiling )
 
     createWall( {x:3,y:0,z:3}, 0, -1, 0, Math.PI* 3/4 , false) // FRONT
 
@@ -322,8 +323,8 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
     scene.add(ambientLight)
 
     objectsStatic.push({
-        body: null,
-        mesh: ambientLight
+      body: null,
+      mesh: ambientLight
     })
 
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.2)
@@ -346,6 +347,11 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
     scene.add(directionalLightCameraHelper)
     directionalLightCameraHelper.visible = false
     folder.add(directionalLightCameraHelper, 'visible').name('Light Helper')
+
+
+    folder.add(camera.rotation, 'x',0,Math.PI*2,0.01)
+    folder.add(camera.rotation, 'y',0,Math.PI*2,0.01)
+    folder.add(camera.rotation, 'z',0,Math.PI*2,0.01)
 
     objectsStatic.push({
       body: null,
@@ -476,6 +482,9 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
 
 
     canvas.addEventListener('click', checkIfClick)
+
+    generateImpulse()
+    setTimeout( ()=>{generateImpulse(centerPoint)}, 2000 )
 }
 
 // Animations ————————————————————————————————————————————————————————
@@ -489,17 +498,6 @@ const tick = ( elapsedTime ) =>
     oldElapsedTime = elapsedTime
 
     const objectsToTest = []
-
-    // for( const object of objectsToUpdate ){
-    //     object.body.applyForce(
-    //         new CANNON.Vec3(-6, 0, 0),
-    //         object.body.position
-    //     )
-    // }
-
-    // if( elapsedTime > 3 ){
-    //     world.gravity.set( 0, 2, 0 )
-    // }
 
     world.step(1/fps, deltaTime, 3)
 
@@ -557,50 +555,100 @@ const tick = ( elapsedTime ) =>
     }
 }
 
-const checkIfClick = () => {
-    if( currentIntersect ){
-        callback(currentIntersect.object.name)
+const generateImpulse = ( toVector ) => {
+
+  let targetVector = null
+
+  for( const object of objectsToUpdate ){
+
+    if( toVector ){
+      targetVector = new THREE.Vector3()
+      targetVector.subVectors( toVector , object.body.position)
     }else{
-        for( const object of objectsToUpdate ){
-            object.body.applyImpulse( new CANNON.Vec3(0, 7, 0), object.body.position )
-        }
+      const impX = (Math.random()-0.5) * 5
+      const impY = (Math.random()-0.5) * 5
+      const impZ = (Math.random()-0.5) * 5
+      targetVector = new CANNON.Vec3(impX, impY, impZ)
     }
+
+    object.body.applyImpulse( targetVector, object.body.position )
+  }
+}
+
+const checkIfClick = () => {
+  if( currentIntersect ){
+    callback(currentIntersect.object.name)
+  }else{
+    generateImpulse()
+  }
 }
 
 const gravClick = (e) => {
 
-    let hasNewGravDir = false
-    const currentEl = gravitySelector.querySelector('.isActive')
+  let hasNewGravDir = false
+  const currentEl = gravitySelector.querySelector('.isActive')
+  const toggle = gravitySelector.querySelector('.toggle')
 
+  // is same as before
+  if( e.target.classList.contains('isActive') ){
+    world.gravity.set( 0, 0, 0 )
+    hasNewGravDir = true
+  }else{
     if( e.target.classList.contains('up') ){
-        world.gravity.set( 0, 9.82, 0 )
-        e.target.classList.add( 'isActive' )
-        hasNewGravDir = true
+      world.gravity.set( 0, 9.82, 0 )
+      e.target.classList.add( 'isActive' )
+      hasNewGravDir = true
     }
     if( e.target.classList.contains('down') ){
-        world.gravity.set( 0, -9.82, 0 )
-        e.target.classList.add( 'isActive' )
-        hasNewGravDir = true
+      world.gravity.set( 0, -9.82, 0 )
+      e.target.classList.add( 'isActive' )
+      hasNewGravDir = true
     }
     if( e.target.classList.contains('right') ){
-        world.gravity.set( 0, 0, -9.82 )
-        e.target.classList.add( 'isActive' )
-        hasNewGravDir = true
+      world.gravity.set( 0, 0, -9.82 )
+      e.target.classList.add( 'isActive' )
+      hasNewGravDir = true
     }
     if( e.target.classList.contains('left') ){
-        world.gravity.set( -9.82, 0, 0 )
-        e.target.classList.add( 'isActive' )
-        hasNewGravDir = true
+      world.gravity.set( -9.82, 0, 0 )
+      e.target.classList.add( 'isActive' )
+      hasNewGravDir = true
     }
     if( e.target.classList.contains('front') ){
-        world.gravity.set( 5, 0, 5 )
-        e.target.classList.add( 'isActive' )
-        hasNewGravDir = true
+      world.gravity.set( 5, 0, 5 )
+      e.target.classList.add( 'isActive' )
+      hasNewGravDir = true
     }
+  }
 
-    if( hasNewGravDir ){
-        currentEl.classList.remove( 'isActive' )
+  if( currentEl && hasNewGravDir ){
+    currentEl.classList.remove( 'isActive' )
+  }
+
+  console.log( world.gravity )
+  if( world.gravity.x === 0 && world.gravity.y === 0 && world.gravity.z === 0 ){
+    toggle.innerHTML = 'off'
+  }else{
+    toggle.innerHTML = 'on'
+  }
+
+  if( e.target.classList.contains('center') ){
+    generateImpulse( centerPoint )
+  }
+
+  if( e.target.classList.contains('upsidedown') ){
+
+    if( cameraIsUpsideDown ){
+
+      camera.lookAt(new THREE.Vector3(0,0,0))
+
+    }else{
+
+      camera.rotation.z = 3.7
+
     }
+    cameraIsUpsideDown = !cameraIsUpsideDown
+  }
 
 }
 
@@ -615,6 +663,8 @@ const remove = () => {
     gravitySelector.classList.add('isHidden')
 
     currentIntersect = null
+    cameraIsUpsideDown = false
+    camera.rotation.z = 0
 
     scene.background = null
 
@@ -663,4 +713,3 @@ const functionObject = {
 }
 
 export default functionObject
-

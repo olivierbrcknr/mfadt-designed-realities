@@ -114,4 +114,3 @@ const museumScene = {
 }
 
 export default museumScene
-

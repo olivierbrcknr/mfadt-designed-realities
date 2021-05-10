@@ -1,9 +1,6 @@
 import * as THREE from 'three'
-// import { material_vinylBeige, material_vinylBrown, material_vinylRed } from './../ownModules/materials'
 
 let renderer = null;
-let object_teapot = null;
-let controls = null;
 let scene = null
 let gui = null
 let folder = null
@@ -111,4 +108,3 @@ const teapotScene = {
 }
 
 export default teapotScene
-
