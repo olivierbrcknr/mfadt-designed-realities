@@ -1,9 +1,8 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-
+import { material_glossyVinyl, material_glass } from './../ownModules/materials'
 
 let renderer = null;
-let object_teapot = null;
 let controls = null;
 let scene = null
 let gui = null
@@ -15,11 +14,11 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, gltfL, tx
 
   renderer = actualRenderer
   gui = actualGui
-  folder = gui.addFolder('Museum')
+  folder = gui.addFolder('Entrance')
   folder.open()
   scene = actualScene
 
-  scene.background = new THREE.Color('#000');
+  scene.background = new THREE.Color('#E46240');
 
   camera.position.x = 3;
   camera.position.y = 3;
@@ -27,15 +26,18 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, gltfL, tx
 
   controls = new OrbitControls(camera, canvas)
   controls.enableDamping = true
+
   controls.target = new THREE.Vector3( 0, 1, 0 )
 
   controls.enableZoom = true
-  controls.minZoom = 1
-  controls.maxZoom = 3
+  controls.minDistance = 1
+  controls.maxDistance = 5
 
-  controls.maxPolarAngle = Math.PI / 2 
+  controls.maxPolarAngle = Math.PI / 2
+  controls.maxAzimuthAngle = Math.PI / 2
+  controls.minAzimuthAngle = 0
 
-  const bakedTexture = txL.load('textures/museum.jpg')
+  const bakedTexture = txL.load('textures/entrance.jpg')
   bakedTexture.flipY = false
   bakedTexture.encoding = THREE.sRGBEncoding
 
@@ -44,23 +46,35 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, gltfL, tx
   renderer.outputEncoding = THREE.sRGBEncoding
 
   gltfL.load(
-    "/objects/museum.glb",
+    "/objects/entrance.glb",
     ( gltf ) => {
 
+      const object = gltf.scene
 
-      const object = gltf.scene.children.find((child) => child.name === 'baked')
+      console.log( object )
 
-      // object.traverse( function ( child ) {
-      //   if ( child instanceof THREE.Mesh ) {
-      //     child.castShadow = true
-      //     child.receiveShadow = true
-      //   }
-      // });
-      object.material = bakedMaterial
+      object.traverse( function ( child ) {
+        if ( child instanceof THREE.Mesh ) {
+          switch( child.name ){
+            case 'baked':
+              child.material = bakedMaterial
+              break
+            case 'sphere':
+              child.material = material_glass
+              break
+            case "blob":
+              child.material = material_glossyVinyl
+              break
+          }
+          console.log( child )
+
+          // objectsStatic.push( child )
+          // scene.add( child );
+        }
+      });
 
       objectsStatic.push(object)
-
-      scene.add( object );
+      scene.add( object )
     }
   );
 
@@ -76,7 +90,7 @@ const tick = ( elapsedTime ) =>
 // Remove
 const remove = () => {
 
-  console.log('Remove Museum Scene')
+  console.log('Remove Entrance Scene')
 
   controls.dispose()
   scene.background = null;
@@ -85,8 +99,8 @@ const remove = () => {
 
   for( const object of objectsStatic ){
     scene.remove( object )
-    object.geometry.dispose()
-    object.material.dispose()
+    // object.geometry.dispose()
+    // object.material.dispose()
   }
   gui.removeFolder( folder )
 }
@@ -100,3 +114,4 @@ const museumScene = {
 }
 
 export default museumScene
+

@@ -1,10 +1,15 @@
 import * as THREE from 'three'
 
+import { environmentMap } from './envMaps'
+
 const textureLoader = new THREE.TextureLoader()
 
 // Textures
 const matCap_porcelain = textureLoader.load('/textures/matcaps/porcelain.jpg')
 const matCap_porcelain_Beige = textureLoader.load('/textures/matcaps/porcelain_beige.jpg')
+const matCap_glossyVinyl = textureLoader.load('/textures/matcaps/blob.jpg')
+matCap_glossyVinyl.encoding = THREE.sRGBEncoding
+
 
 // Materials
 const material_porcelain = new THREE.MeshMatcapMaterial()
@@ -14,6 +19,9 @@ material_porcelain.side = THREE.DoubleSide
 const material_porcelain_Beige = new THREE.MeshMatcapMaterial()
 material_porcelain_Beige.matcap = matCap_porcelain_Beige
 material_porcelain_Beige.side = THREE.DoubleSide
+
+const material_glossyVinyl = new THREE.MeshMatcapMaterial()
+material_glossyVinyl.matcap = matCap_glossyVinyl
 
 // Basic
 const material_vinylBeige = new THREE.MeshStandardMaterial()
@@ -34,22 +42,49 @@ material_transparent.opacity = 0
 
 const material_glossyRed = new THREE.MeshStandardMaterial()
 material_glossyRed.color = new THREE.Color(0xE46240)
-material_glossyRed.side = THREE.DoubleSide
-material_glossyRed.metalness = 0.4
-material_glossyRed.roughness = 0.4
+material_glossyRed.metalness = 0.2
+material_glossyRed.roughness = 0.3
 
 const material_hover = new THREE.MeshStandardMaterial()
 material_hover.color = new THREE.Color(0xE46240)
 material_hover.transparent = true
 material_hover.opacity = 0.4
 
-export { 
-    material_vinylBeige, 
-    material_vinylBrown, 
-    material_vinylRed, 
+// Reflection
+const material_glass = new THREE.MeshBasicMaterial({
+  envMap: environmentMap,
+  reflectivity: 0.8,
+  opacity: 0.6,
+  transparent: true
+})
+
+// Reflection + Light
+const material_metall = new THREE.MeshStandardMaterial({
+  envMap: environmentMap,
+  roughness: 0.1,
+  metalness: 0.6,
+})
+
+const material_glass_wLight = new THREE.MeshStandardMaterial({
+  envMap: environmentMap,
+  roughness: 0.1,
+  opacity: 0.3,
+  transparent: true,
+  metalness: 1,
+  refractionRatio: 0.8,
+})
+
+export {
+    material_vinylBeige,
+    material_vinylBrown,
+    material_vinylRed,
     material_porcelain,
     material_porcelain_Beige,
     material_transparent,
     material_glossyRed,
-    material_hover
+    material_hover,
+    material_glossyVinyl,
+    material_metall,
+    material_glass,
+    material_glass_wLight
 }

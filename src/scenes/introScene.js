@@ -1,8 +1,7 @@
 import * as THREE from 'three'
 import CANNON from 'cannon'
 
-import { material_vinylBeige, material_vinylBrown, material_vinylRed, material_porcelain_Beige, material_transparent, material_glossyRed, material_hover } from './materials.js'
-import { DirectionalLightHelper } from 'three'
+import { material_vinylBeige, material_vinylBrown, material_vinylRed, material_porcelain_Beige, material_transparent, material_glossyRed, material_hover, material_metall } from './../ownModules/materials'
 
 let renderer = null
 let object_teapot = null
@@ -20,7 +19,7 @@ let gravitySelector = null
 let callback = () => {}
 
 const objectsStatic = [] // mesh (non physics)
-const objectsToUpdate = [] // pyhsics
+let objectsToUpdate = [] // pyhsics
 // const objectsToTest = [] // raycaster
 
 // set physics world
@@ -53,7 +52,7 @@ const createBox = ( width, height, depth, position, mass, optName, hasObj = null
         z: position.z + ( Math.random()-0.5 ) * 2
     }
 
-    let multiplier = hasObj ? 1.1 : 1 
+    let multiplier = hasObj ? 1.1 : 1
     multiplier = totalMultiplier ? (multiplier * totalMultiplier) : multiplier
 
     let objectMesh = null
@@ -61,20 +60,32 @@ const createBox = ( width, height, depth, position, mass, optName, hasObj = null
     if( hasObj ){
 
         objectMesh = hasObj
-    
-        hasObj.traverse( function ( child ) {
-            if ( child instanceof THREE.Mesh ) {
-                if( mat !== false ){
-                    if( mat ){
-                        child.material = mat
-                    }else{
-                        child.material = material_vinylBrown
-                    }
-                }
 
-                child.castShadow = true
+        if( hasObj.children.length > 0 ){
+
+          hasObj.traverse( function ( child ) {
+              if ( child instanceof THREE.Mesh ) {
+                  if( mat !== false ){
+                      if( mat ){
+                          child.material = mat
+                      }else{
+                          child.material = material_vinylBrown
+                      }
+                  }
+
+                  child.castShadow = true
+              }
+          });
+        }else{
+          if( mat !== false ){
+            if( mat ){
+              hasObj.material = mat
+            }else{
+              hasObj.material = material_vinylBrown
             }
-        });
+          }
+          hasObj.castShadow = true
+        }
 
         objectMesh.scale.set( totalMultiplier, totalMultiplier, totalMultiplier )
         objectMesh.position.copy( randomPosition )
@@ -132,7 +143,7 @@ const createSphere = (radius, position, optName, hasObj = null, mat = null, tota
         z: position.z + ( Math.random()-0.5 ) * 2
     }
 
-    let multiplier = hasObj ? 1.1 : 1 
+    let multiplier = hasObj ? 1.1 : 1
     multiplier = totalMultiplier ? (multiplier * totalMultiplier) : multiplier
 
     let objectMesh = null
@@ -142,7 +153,7 @@ const createSphere = (radius, position, optName, hasObj = null, mat = null, tota
     if( hasObj ){
 
         objectMesh = hasObj
-    
+
         hasObj.traverse( function ( child ) {
             if ( child instanceof THREE.Mesh ) {
                 if( mat !== false ){
@@ -157,7 +168,7 @@ const createSphere = (radius, position, optName, hasObj = null, mat = null, tota
             }
             // if( isCompass ){
             //     if( child.name === 'RING' ){
-                    
+
             //     }
             //     if( child.name === 'NEEDLE' ){
             //         console.log(child)
@@ -168,6 +179,8 @@ const createSphere = (radius, position, optName, hasObj = null, mat = null, tota
 
         objectMesh.scale.set( totalMultiplier, totalMultiplier, totalMultiplier )
         objectMesh.position.copy( randomPosition )
+
+        objectMesh.renderOrder = -1
 
         scene.add(objectMesh)
     }
@@ -213,7 +226,7 @@ const createWall = ( position, q1, q2, q3, rad1, visible = false ) => {
     const shape = new CANNON.Plane() // is infinite
     const body = new CANNON.Body()
     body.mass = 0 // object is static
-    body.addShape( shape ) 
+    body.addShape( shape )
     body.quaternion.setFromAxisAngle(  // only can do quaternion
         new CANNON.Vec3(q1,q2,q3),
         rad1
@@ -256,7 +269,7 @@ const createWall = ( position, q1, q2, q3, rad1, visible = false ) => {
 
 }
 
-// Init function 
+// Init function
 const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGui, sizes, txL, gltfL, actualRayCaster, hasCallBack=()=>{} ) => {
 
     renderer = actualRenderer
@@ -283,9 +296,15 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
     renderer.shadowMap.enabled = true
     renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
+
     camera.position.y = 6
     camera.position.x = 5
     camera.position.z = 5
+
+    camera.lookAt(new THREE.Vector3(0,0,0))
+
+    // camera.rotation.z = Math.PI
+
 
     world.gravity.set( 0, -9.82, 0 )
 
@@ -297,8 +316,6 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
     createWall( {x:0,y:5,z:0}, 1, 0, 0, Math.PI/ 2 , false) // y pos
 
     createWall( {x:3,y:0,z:3}, 0, -1, 0, Math.PI* 3/4 , false) // FRONT
-    
-    camera.lookAt(new THREE.Vector3(0,0,0))
 
     // lights
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.9)
@@ -328,59 +345,61 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
     const directionalLightCameraHelper = new THREE.CameraHelper(directionalLight.shadow.camera)
     scene.add(directionalLightCameraHelper)
     directionalLightCameraHelper.visible = false
-    folder.add(directionalLightCameraHelper, 'visible').name('CameraHelper')
+    folder.add(directionalLightCameraHelper, 'visible').name('Light Helper')
 
     objectsStatic.push({
-        body: null,
-        mesh: directionalLightCameraHelper
+      body: null,
+      mesh: directionalLightCameraHelper
     })
 
     // Room / plant
-    // createBox(3,3,3,{x:4,y:5,z:-2},'room')
     gltfL.load(
-        '/objects/plant.gltf',
-        (gltf) =>
-        {
-            createBox(
-                0.2,0.2,0.2,
-                {x:2,y:3,z:0},
-                1.7,
-                'room', 
-                gltf.scene, 
-                false, 
-                3
-            )
-        }
+      '/objects/plant.glb',
+      (gltf) =>
+      {
+        createBox(
+          0.2,0.2,0.2,
+          {x:2,y:3,z:0},
+          1.7,
+          'room',
+          gltf.scene,
+          false,
+          3
+        )
+      }
     )
 
     // teapot
     gltfL.load(
-        '/objects/teapot_low.gltf',
+        '/objects/teapot.glb',
         (gltf) =>
         {
-            createBox(
-                1,1,1,
-                {x:1,y:3,z:2},
-                1.4,
-                'teapot', 
-                gltf.scene, 
-                material_porcelain_Beige, 
-                0.5
-            )
+
+          const obj = gltf.scene.children.find( o => o.name === "TeaPot" )
+
+          createBox(
+              2,2,2,
+              {x:1,y:3,z:2},
+              1.4,
+              'teapot',
+              obj,
+              material_porcelain_Beige,
+              0.3
+          )
         }
     )
-    
+
     // chair
     gltfL.load(
-        '/objects/chair.gltf',
+        '/objects/chair.glb',
         (gltf) =>
         {
             createBox(
                 0.43,2.73,0.48,
                 {x:-2,y:3,z:-4},
                 2,
-                'chair', 
-                gltf.scene, 
+                'chair',
+                gltf.scene,
                 false,
                 1.5)
         }
@@ -390,19 +409,36 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
     // coins
     // createBox(2,0.5,2,{x:-4,y:3,z:2},'wall')
     gltfL.load(
-        '/objects/coins.gltf',
+        '/objects/coins.glb',
         (gltf) =>
         {
             createBox(
                 0.98,0.36,0.62,
                 {x:-2,y:3,z:-4},
                 0.7,
-                'wall', 
-                gltf.scene, 
+                'wall',
+                gltf.scene,
                 material_vinylRed,
                 1.5)
         }
     )
+
+    // caliper
+    gltfL.load(
+      '/objects/caliper.glb',
+      (gltf) =>
+      {
+        createBox(
+          1,0.2,0.1,
+          {x:2,y:2,z:1},
+          1.2,
+          'objects',
+          gltf.scene,
+          material_metall,
+          1.5
+        )
+      }
+  )
 
     // compass
     // createBox(1,1,1,{x:0,y:3,z:0},'compass')
@@ -413,8 +449,8 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
             createSphere(
                 0.8,
                 {x:0,y:3,z:0},
-                'entrance', 
-                gltf.scene, 
+                'entrance',
+                gltf.scene,
                 false,
                 1,
                 true)
@@ -430,16 +466,16 @@ const init = ( actualRenderer, actualScene, actualCamera, actualCanvas, actualGu
                 2.6,1.4,2.55,
                 {x:-2,y:4,z:2},
                 1,
-                'museum', 
-                gltf.scene, 
-                material_vinylRed, 
+                'museum',
+                gltf.scene,
+                material_glossyRed,
                 0.5
             )
         }
     )
 
 
-    canvas.addEventListener('click', checkIfClick)    
+    canvas.addEventListener('click', checkIfClick)
 }
 
 // Animations ————————————————————————————————————————————————————————
@@ -455,9 +491,9 @@ const tick = ( elapsedTime ) =>
     const objectsToTest = []
 
     // for( const object of objectsToUpdate ){
-    //     object.body.applyForce( 
-    //         new CANNON.Vec3(-6, 0, 0), 
-    //         object.body.position 
+    //     object.body.applyForce(
+    //         new CANNON.Vec3(-6, 0, 0),
+    //         object.body.position
     //     )
     // }
 
@@ -521,7 +557,7 @@ const tick = ( elapsedTime ) =>
     }
 }
 
-const checkIfClick = () => { 
+const checkIfClick = () => {
     if( currentIntersect ){
         callback(currentIntersect.object.name)
     }else{
@@ -574,10 +610,10 @@ const remove = () => {
     canvas.classList.remove('--isClick')
 
     console.log('Remove IntoScene')
-    canvas.removeEventListener('click', checkIfClick) 
+    canvas.removeEventListener('click', checkIfClick)
     gravitySelector.removeEventListener('click',gravClick)
     gravitySelector.classList.add('isHidden')
-    
+
     currentIntersect = null
 
     scene.background = null
@@ -602,13 +638,15 @@ const remove = () => {
         world.removeBody( object.body )
         scene.remove( object.mesh )
         object.mesh.geometry.dispose()
-        object.mesh.material.dispose()
+        // object.mesh.material.dispose()
         if( object.objectMesh ){
             scene.remove( object.objectMesh )
             // object.objectMesh.geometry.dispose()
             // object.objectMesh.material.dispose()
         }
     }
+
+    objectsToUpdate = []
 
     gui.removeFolder( folder )
 }

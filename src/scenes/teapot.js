@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { material_porcelain } from './materials.js'
+import { material_porcelain } from './../ownModules/materials'
 
 
 let renderer = null;
@@ -13,11 +13,11 @@ let folder = null
 const objectsStatic = []
 
 const objectScales = {
-  teapot: 0.02,
+  teapot: 1,
   wall: 20
 }
 
-const init = ( actualRenderer, actualScene, camera, canvas, actualGui, sizes, objL ) => {
+const init = ( actualRenderer, actualScene, camera, canvas, actualGui, sizes, gltfL ) => {
 
   renderer = actualRenderer
   gui = actualGui
@@ -25,31 +25,30 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, sizes, ob
   folder.open()
   scene = actualScene
 
-  camera.position.y = 40;
-  camera.position.z = 65;
+  camera.position.y = 3;
+  camera.position.z = 3;
 
   controls = new OrbitControls(camera, canvas)
   controls.enableDamping = true
   controls.enableZoom = false
   controls.autoRotate = true
 
-  objL.load(
-    "/objects/TeaPot.obj",
-    ( object ) => {
+  gltfL.load(
+    "/objects/teapot.glb",
+    ( gltf ) => {
 
-      object_teapot = object;
-      object.scale.set( objectScales.teapot,objectScales.teapot,objectScales.teapot );
+      console.log( gltf )
 
-      object.traverse( function ( child ) {
-        if ( child instanceof THREE.Mesh ) {
-          child.material = material_porcelain
-        }
-      });
+      object_teapot = gltf.scene.children.find( o => o.name === "TeaPot" )
 
-      objectsStatic.push(object)
+      object_teapot.scale.set( objectScales.teapot,objectScales.teapot,objectScales.teapot );
 
-      camera.lookAt(object.position)
-      scene.add( object );
+      object_teapot.material = material_porcelain
+
+      objectsStatic.push( object_teapot )
+
+      camera.lookAt( object_teapot.position )
+      scene.add( object_teapot );
     }
   );
 

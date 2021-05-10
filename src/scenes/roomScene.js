@@ -1,7 +1,5 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { material_vinylBeige } from './materials.js'
-
 
 let renderer = null;
 let object_teapot = null;
@@ -20,7 +18,7 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, gltfL, tx
   folder.open()
   scene = actualScene
 
-  scene.background = new THREE.Color('#CCC3B6');
+  scene.background = new THREE.Color('#BDBCB8');
 
   const bakedTexture = txL.load('textures/room.jpg')
   bakedTexture.flipY = false
@@ -39,7 +37,7 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, gltfL, tx
   controls.enableDamping = true
   controls.enableZoom = false
 
-  controls.maxPolarAngle = Math.PI / 2 
+  controls.maxPolarAngle = Math.PI / 2
   controls.maxAzimuthAngle = Math.PI / 2
   controls.minAzimuthAngle = 0
 
@@ -56,7 +54,7 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, gltfL, tx
           if( child.name === 'window' ){
             child.material = windowMaterial
           }
-          
+
           if( child.name === 'baked' ){
             child.material = bakedMaterial
           }
@@ -70,7 +68,7 @@ const init = ( actualRenderer, actualScene, camera, canvas, actualGui, gltfL, tx
       scene.add( object );
     }
   );
-    
+
 }
 
 // Animations ————————————————————————————————————————————————————————

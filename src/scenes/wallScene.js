@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { material_vinylBeige, material_vinylBrown, material_vinylRed } from './materials.js'
+// import { material_vinylBeige, material_vinylBrown, material_vinylRed } from './../ownModules/materials'
 
 let renderer = null;
 let object_teapot = null;
@@ -26,8 +26,8 @@ const init = ( actualRenderer, actualScene, actualCamera, canvas, actualGui, siz
 
   camera.position.x = 0;
   camera.position.y = 1;
-  camera.position.z = 3;
-  camera.lookAt( new THREE.Vector3( 0,2,0 ) )
+  camera.position.z = 4;
+  camera.lookAt( new THREE.Vector3( 0,1,0 ) )
 
   camera.fov = 30
 
@@ -53,6 +53,7 @@ const init = ( actualRenderer, actualScene, actualCamera, canvas, actualGui, siz
       //   }
       // });
       object.material = bakedMaterial
+      object.material.side = THREE.DoubleSide
 
       objectsStatic.push(object)
 
@@ -60,7 +61,10 @@ const init = ( actualRenderer, actualScene, actualCamera, canvas, actualGui, siz
     }
   );
 
-  scene.background = new THREE.Color('#CCC3B6');
+  scene.background = new THREE.Color('#4F4C46');
+
+  const fog = new THREE.Fog('#4F4C46', 5, 10)
+  scene.fog = fog
 
 }
 
@@ -85,6 +89,7 @@ const remove = () => {
   scene.background = null;
 
   camera.fov = 45
+  scene.fog = null
 
   renderer.outputEncoding = THREE.LinearEncoding
 

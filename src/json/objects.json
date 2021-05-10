@@ -1,46 +1,46 @@
 [
-    {
-        "name": "The Entrance",
-        "slug": "entrance",
-        "desc": "…",
-        "active": true
-    },
-    {
-        "name": "The Museum",
-        "slug": "museum",
-        "desc": "…",
-        "active": true,
-        "isDark": true
-    },
-    {
-        "name": "The Teapot",
-        "slug": "teapot",
-        "desc": "Sarah brought cake. Neither could I see her nor did I know if she actually existed, but still, I appreciated the gesture.",
-        "active": true,
-        "isDark": true
-    },
-    {
-        "name": "The Furniture",
-        "slug": "furniture",
-        "desc": "…",
-        "active": false
-    },
-    {
-        "name": "The Wall",
-        "slug": "wall",
-        "desc": "“I don’t know anymore where I can go.” Marcus said. The floor collapsed below him while another appeared, but where the wall was before. Confused, he took a step to the side, or down, depending on the angle.",
-        "active": true
-    },
-    {
-        "name": "The Objects",
-        "slug": "objects",
-        "desc": "They were strange. I could not grasp what they were supposed to do. Some were levitating, but also they weren’t.",
-        "active": false
-    },
-    {
-        "name": "The Room",
-        "slug": "room",
-        "desc": "My whole world happens within this room. Am I still inside? Is this the new outside? What does ‘outside’ even mean?",
-        "active": true
-    }
+  {
+    "name": "The Entrance",
+    "slug": "entrance",
+    "desc": "‘Don't forget your drawler!’ she shouted. ‘I won't, mom!’ A little annoyed, Ezlo took it from the wall and went on to leave the house.",
+    "active": true
+  },
+  {
+    "name": "The Museum",
+    "slug": "museum",
+    "desc": "We found them close to the edge. They are so different from what we are used to. Did ‘they’ use this to measure their paths?",
+    "active": true,
+    "isDark": true
+  },
+  {
+    "name": "The Teapot",
+    "slug": "teapot",
+    "desc": "Diana brought cake. Neither could I see her nor did I know if she actually existed, but still, I appreciated the gesture.",
+    "active": true,
+    "isDark": true
+  },
+  {
+    "name": "The Furniture",
+    "slug": "furniture",
+    "desc": "I pushed back the chair and went to the shelf. Absorbed in the book in my hands, I, almost in trance, rotated the plant as usual.",
+    "active": false
+  },
+  {
+    "name": "The Wall",
+    "slug": "wall",
+    "desc": "“I don’t know anymore where I can go.” Marcus said. The floor collapsed below him while another appeared where the wall was before. Confused, he took a step to the side, or down, depending on the angle.",
+    "active": true
+  },
+  {
+    "name": "The Objects",
+    "slug": "objects",
+    "desc": "They were strange. I could not grasp what they were supposed to do. Some were levitating, but also weren’t, while others seemed boringly normal, but then behaved unexpected.",
+    "active": true
+  },
+  {
+    "name": "The Room",
+    "slug": "room",
+    "desc": "My whole world happens within this room. Am I still inside? Is this the new outside? What does ‘outside’ even mean?",
+    "active": true
+  }
 ]

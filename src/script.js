@@ -4,7 +4,6 @@ import './css/grid.css'
 import './css/style.css'
 
 import * as THREE from 'three'
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 
@@ -13,14 +12,17 @@ import Stats from 'stats.js'
 
 import objectData from './json/objects.json'
 
-import teapotScene from './objects/teapot.js'
-import introScene from './objects/introScene'
-import wallScene from './objects/wallScene'
-import roomScene from './objects/roomScene'
-import museumScene from './objects/museumScene'
-import entranceScene from './objects/entranceScene'
+import teapotScene from './scenes/teapot.js'
+import introScene from './scenes/introScene'
+import wallScene from './scenes/wallScene'
+import roomScene from './scenes/roomScene'
+import museumScene from './scenes/museumScene'
+import entranceScene from './scenes/entranceScene'
+import objectScene from './scenes/objectsScene'
 
-// html 
+import { environmentMap } from './ownModules/envMaps'
+
+// html
 const canvas = document.querySelector('#threeCanvas')
 const header = document.querySelector('#header .title')
 const pageTitleDOM = header.querySelector('h1')
@@ -31,7 +33,7 @@ const projectDesc = document.querySelector('#projectInfo')
 let isIntro = true
 let currentSceneName = 'intro'
 
-const createProjectInfoRow = ( container, info, isOnlyInfo = false ) => {
+const createProjectInfoRow = ( container, info, num, isOnlyInfo = false ) => {
 
   const listItem = document.createElement("div")
   listItem.classList.add("columnContainer")
@@ -50,7 +52,7 @@ const createProjectInfoRow = ( container, info, isOnlyInfo = false ) => {
 
   const listItem_Num = document.createElement("div")
   listItem_Num.classList.add("project_num")
-  listItem_Num.innerHTML = "Exploration #"+dataIndex
+  listItem_Num.innerHTML = "Exploration #"+num
   listItem.appendChild(listItem_Num)
 
   const listItem_title = document.createElement("div")
@@ -70,8 +72,8 @@ const createProjectInfoRow = ( container, info, isOnlyInfo = false ) => {
 let dataIndex = 1
 for( const info of objectData ){
 
-  createProjectInfoRow( projectList , info )
-  
+  createProjectInfoRow( projectList , info, dataIndex )
+
   dataIndex++
 }
 
@@ -118,7 +120,6 @@ const sizes = {
 
 // Loaders
 const textureLoader = new THREE.TextureLoader()
-const objLoader = new OBJLoader()
 
 const dracoLoader = new DRACOLoader()
 dracoLoader.setDecoderPath('draco/')
@@ -136,6 +137,9 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+// Environment map
+scene.environment = environmentMap
 
 scene.add(camera)
 
@@ -199,7 +203,7 @@ sceneFolder.add(debugObject,"initIntroScene").name('Start Intro Scene')
 debugObject.initTeaPotScene = () => {
   debugObject.resetScene()
   currentScene = teapotScene;
-  currentScene.init(renderer, scene, camera, canvas, gui, sizes, objLoader);
+  currentScene.init(renderer, scene, camera, canvas, gui, sizes, gltfLoader);
 }
 sceneFolder.add(debugObject,"initTeaPotScene").name('Start Teapot Scene')
 
@@ -231,6 +235,12 @@ debugObject.initEntranceScene = () => {
 }
 sceneFolder.add(debugObject,"initEntranceScene").name('Start Entrance Scene')
 
+debugObject.initObjectsScene = () => {
+  debugObject.resetScene()
+  currentScene = objectScene;
+  currentScene.init(renderer, scene, camera, canvas, gui, gltfLoader, textureLoader);
+}
+sceneFolder.add(debugObject,"initObjectsScene").name('Start Objects Scene')
 
 
 const switchScene = (name) => {
@@ -258,11 +268,14 @@ const switchScene = (name) => {
     case 'entrance':
       debugObject.initEntranceScene()
       break;
+    case 'objects':
+      debugObject.initObjectsScene()
+      break;
     default:
       isAvailable = false
       break;
   }
-  
+
   if( isAvailable ){
     console.log('%cswitching to '+name,'color: #57E28E;')
   }else{
@@ -281,6 +294,8 @@ const switchScene = (name) => {
     }else{
       const currInfo = objectData.find( i => i.slug === currentSceneName )
 
+      const indexNum = objectData.indexOf(currInfo) + 1
+
       titleDOM.innerHTML = currInfo["name"]
       infoHeight = 200
       document.querySelector('#wrapper').classList.add('isProject')
@@ -288,7 +303,7 @@ const switchScene = (name) => {
         document.querySelector('#wrapper').classList.add('isDark')
       }
       projectDesc.innerHTML = ""
-      createProjectInfoRow( projectDesc , currInfo, true )
+      createProjectInfoRow( projectDesc , currInfo, indexNum, true )
     }
 
     updateRenderSizes()
@@ -318,12 +333,12 @@ const tick = () =>
   const elapsedTime = clock.getElapsedTime()
 
   if( currentScene ){
-    
+
     currentScene.tick( elapsedTime )
     // renderer.update()
   }
 
-  
+
   renderer.render(scene, camera)
 
   // Call tick again on the next frame
@@ -350,11 +365,11 @@ const updateRenderSizes = () => {
 
 // Fix elements
 window.addEventListener('resize', () => {
-  
+
   updateRenderSizes()
-  
+
 })
 
 window.addEventListener('scroll', () => {
-  
+
 })
